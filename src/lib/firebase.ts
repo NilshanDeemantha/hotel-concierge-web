@@ -1,6 +1,5 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore/lite";
 
 // Firebase web config is public by design: it only identifies the project.
 // Access is controlled by Firebase Auth and server-side checks, not by hiding these values.
@@ -14,6 +13,3 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-
-// Browsers may only read and create their own users/{uid} document; see firestore.rules.
-export const db = getFirestore(app);

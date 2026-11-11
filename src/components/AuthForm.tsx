@@ -2,19 +2,18 @@
 
 import { FirebaseError } from "firebase/app";
 import {
-  createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
   type User,
 } from "firebase/auth";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore/lite";
 import Link from "next/link";
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { auth, db } from "@/lib/firebase";
+import { useEffect, useState, type FormEvent } from "react";
+import { auth } from "@/lib/firebase";
 
 type Mode = "login" | "signup";
-type Profile = { name: string; phone?: string };
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const COPY = {
   login: {
@@ -39,20 +38,40 @@ const ERRORS: Record<string, string> = {
   "auth/invalid-credential": "The email or password is wrong.",
   "auth/invalid-email": "That email address doesn't look right.",
   "auth/email-already-in-use": "An account with this email already exists. Try logging in.",
-  "auth/weak-password": "Use a password with at least 6 characters.",
   "auth/too-many-requests": "Too many attempts. Please wait a few minutes and try again.",
   "auth/network-request-failed": "No connection. Check your internet and try again.",
   "auth/operation-not-allowed": "Email sign-in is not turned on for this site yet.",
   "auth/configuration-not-found": "Email sign-in is not turned on for this site yet.",
-  "permission-denied": "We couldn't save your details. Check the name and phone number.",
 };
 
+// An error whose message is already written for the user (it comes from our own server).
+class ServerError extends Error {}
+
 function errorMessage(error: unknown) {
+  if (error instanceof ServerError) return error.message;
   const code = error instanceof FirebaseError ? error.code : "";
   return ERRORS[code] ?? "Something went wrong. Please try again.";
 }
 
-// Same pattern as firestore.rules, so the form and the rules agree.
+// The server checks the details, creates the account and saves the profile.
+async function register(details: { name: string; phone: string; email: string; password: string }) {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(details),
+    });
+  } catch {
+    throw new ServerError("No connection. Check your internet and try again.");
+  }
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new ServerError(body?.error ?? "Something went wrong. Please try again.");
+  }
+}
+
+// Same pattern as the server, which is the check that counts.
 const PHONE_PATTERN = "[+0-9 \\(\\)\\-]{6,20}";
 
 const inputClass =
@@ -60,15 +79,6 @@ const inputClass =
 const labelClass = "flex flex-col gap-1 text-sm font-medium";
 const primaryButtonClass =
   "min-h-11 w-full rounded-full bg-brand px-4 font-semibold text-white disabled:opacity-60";
-
-function saveProfile(uid: string, name: string, phone: string) {
-  const profile = {
-    name: name.trim(),
-    ...(phone.trim() && { phone: phone.trim() }),
-    created_at: serverTimestamp(),
-  };
-  return setDoc(doc(db, "users", uid), profile);
-}
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const copy = COPY[mode];
@@ -80,24 +90,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [busy, setBusy] = useState(false);
   // undefined = still checking, null = signed out
   const [user, setUser] = useState<User | null | undefined>(undefined);
-  // undefined = still loading, null = signed in but no profile saved yet
-  const [profile, setProfile] = useState<Profile | null | undefined>(undefined);
-
-  // True while sign-up is writing the profile, so the profile lookup below does not race it.
-  const creating = useRef(false);
 
   useEffect(() => onAuthStateChanged(auth, setUser), []);
-
-  useEffect(() => {
-    if (!user) return;
-    let current = true;
-    getDoc(doc(db, "users", user.uid))
-      .then((snap) => current && !creating.current && setProfile(snap.exists() ? (snap.data() as Profile) : null))
-      .catch(() => current && !creating.current && setProfile(null));
-    return () => {
-      current = false;
-    };
-  }, [user]);
 
   async function run(action: () => Promise<void>) {
     setError("");
@@ -114,38 +108,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     run(async () => {
-      if (mode === "login") {
-        await signInWithEmailAndPassword(auth, email, password);
-      } else {
-        creating.current = true;
-        try {
-          const { user: created } = await createUserWithEmailAndPassword(auth, email, password);
-          await saveProfile(created.uid, name, phone);
-          setProfile({ name: name.trim(), phone: phone.trim() || undefined });
-        } catch (e) {
-          // The account may exist without a profile; the "Finish your profile" form asks again.
-          if (auth.currentUser) setProfile(null);
-          throw e;
-        } finally {
-          creating.current = false;
-        }
+      if (mode === "signup") {
+        await register({ name, phone, email, password });
       }
+      await signInWithEmailAndPassword(auth, email, password);
       setPassword("");
     });
-  }
-
-  function handleProfileSubmit(event: FormEvent) {
-    event.preventDefault();
-    if (!user) return;
-    run(async () => {
-      await saveProfile(user.uid, name, phone);
-      setProfile({ name: name.trim(), phone: phone.trim() || undefined });
-    });
-  }
-
-  function handleSignOut() {
-    setProfile(undefined);
-    signOut(auth);
   }
 
   const profileFields = (
@@ -188,31 +156,13 @@ export function AuthForm({ mode }: { mode: Mode }) {
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-6">
         <p className="font-serif text-lg font-semibold text-brand">Thambili Bay</p>
 
-        {user && profile === undefined && <p className="mt-4 text-muted">Loading…</p>}
-
-        {user && profile === null && (
+        {user && (
           <>
-            <h1 className="mt-2 font-serif text-2xl font-semibold">Finish your profile</h1>
-            <p className="mt-2 break-words text-sm text-muted">Signed in as {user.email}</p>
-            <form className="mt-6 flex flex-col gap-4" onSubmit={handleProfileSubmit}>
-              {profileFields}
-              {errorLine}
-              <button type="submit" className={primaryButtonClass} disabled={busy}>
-                {busy ? "Saving…" : "Save"}
-              </button>
-            </form>
-            <button type="button" className="mt-4 min-h-11 w-full text-sm text-muted underline" onClick={handleSignOut}>
-              Sign out
-            </button>
-          </>
-        )}
-
-        {user && profile && (
-          <>
-            <h1 className="mt-2 font-serif text-2xl font-semibold">Hello, {profile.name}</h1>
+            <h1 className="mt-2 font-serif text-2xl font-semibold">
+              Hello{user.displayName ? `, ${user.displayName}` : ""}
+            </h1>
             <p className="mt-2 break-words text-muted">{user.email}</p>
-            {profile.phone && <p className="text-muted">{profile.phone}</p>}
-            <button type="button" className={`${primaryButtonClass} mt-6`} onClick={handleSignOut}>
+            <button type="button" className={`${primaryButtonClass} mt-6`} onClick={() => signOut(auth)}>
               Sign out
             </button>
           </>
@@ -245,7 +195,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
                   type="password"
                   autoComplete={mode === "login" ? "current-password" : "new-password"}
                   required
-                  minLength={6}
+                  minLength={mode === "signup" ? 8 : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
