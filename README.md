@@ -31,6 +31,12 @@ The site is static files on Firebase Hosting: https://thambili-bay-concierge.web
 
 Merging `master` into the `production` branch (through a pull request) runs the `release` workflow, which builds the site and publishes it.
 
+Firestore security rules live in `firestore.rules` and are published by hand after a change:
+
+```bash
+firebase deploy --only firestore:rules --project thambili-bay-concierge
+```
+
 ## License
 
 No license. The source is public for review only. All rights reserved.
