@@ -1,0 +1,31 @@
+name: release
+
+# Publishes the site to Firebase Hosting when changes are merged into the production branch.
+on:
+  push:
+    branches: [production]
+
+permissions:
+  contents: read
+
+concurrency: release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_THAMBILI_BAY_CONCIERGE }}
+          projectId: thambili-bay-concierge
+          channelId: live
