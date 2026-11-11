@@ -36,6 +36,9 @@ const COPY = {
 
 const ERRORS: Record<string, string> = {
   "auth/invalid-credential": "The email or password is wrong.",
+  // Older projects and the emulator report these two instead of the one above.
+  "auth/wrong-password": "The email or password is wrong.",
+  "auth/user-not-found": "The email or password is wrong.",
   "auth/invalid-email": "That email address doesn't look right.",
   "auth/email-already-in-use": "An account with this email already exists. Try logging in.",
   "auth/too-many-requests": "Too many attempts. Please wait a few minutes and try again.",
