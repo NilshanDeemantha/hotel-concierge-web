@@ -23,6 +23,13 @@ Open http://localhost:3000.
 
 - `master` is protected. Every change goes through a pull request.
 - Branch names: `feat/web-0001`, `fix/web-0002`, `chore/web-0003`. The number increases by one for each change.
+- A pull request can be merged only after the owner adds the `approved` label.
+
+## Release
+
+The site is static files on Firebase Hosting: https://thambili-bay-concierge.web.app
+
+Merging `master` into the `production` branch (through a pull request) runs the `release` workflow, which builds the site and publishes it.
 
 ## License
 
