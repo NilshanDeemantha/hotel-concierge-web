@@ -58,6 +58,8 @@ function errorMessage(error: unknown) {
 
 // The server checks the details, creates the account and saves the profile.
 async function register(details: { name: string; phone: string; email: string; password: string }) {
+  // Without this check a missing setting would send the request to the page's own address.
+  if (!API_URL) throw new ServerError("Sign-up is not set up: NEXT_PUBLIC_API_URL is missing.");
   let response: Response;
   try {
     response = await fetch(`${API_URL}/register`, {
