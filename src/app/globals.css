@@ -10,6 +10,25 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-fraunces), Georgia, serif;
+}
+
+/* Design tokens from the design document: use bg-brand, text-muted, border-line and so on. */
+@theme {
+  --color-bg: #faf6ef;
+  --color-surface: #ffffff;
+  --color-ink: #1e2a28;
+  --color-muted: #5f6f6b;
+  --color-line: #e6dfd3;
+  --color-brand: #0f5c55;
+  --color-brand-soft: #e3f0ee;
+  --color-accent: #c9502f;
+  --color-ok: #1f7a4d;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 @media (prefers-color-scheme: dark) {
