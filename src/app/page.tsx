@@ -5,7 +5,6 @@ const ROOMS = [
     name: "Garden Room",
     detail: "Queen bed and a private terrace among the palms.",
     tags: ["Sleeps 2", "Terrace", "Breakfast"],
-    price: 85,
     image: "/images/room-garden.jpg",
     alt: "White tables and chairs on a terrace in a tropical garden",
   },
@@ -13,7 +12,6 @@ const ROOMS = [
     name: "Sea View Deluxe",
     detail: "King bed and a balcony that looks over the bay.",
     tags: ["Sleeps 2", "Balcony", "Breakfast"],
-    price: 120,
     image: "/images/room-seaview.jpg",
     alt: "Open balcony doors looking out over the sea",
   },
@@ -21,7 +19,6 @@ const ROOMS = [
     name: "Family Suite",
     detail: "Two connected rooms with space for the whole family.",
     tags: ["Sleeps 4", "Two rooms", "Breakfast"],
-    price: 160,
     image: "/images/room-suite.jpg",
     alt: "A bright hotel bedroom with a large bed",
   },
@@ -30,8 +27,18 @@ const ROOMS = [
 const CONCIERGE = [
   {
     title: "Check rooms and book",
-    text: "Tell it your dates. It shows what is free with the total price, and nothing is booked until you tap Confirm.",
+    text: "Tell her your dates. She shows what is free, and nothing is booked until you tap Confirm.",
     icon: "M3 8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zM3 10h18M8 3v4M16 3v4M8.5 15.5l2.3 2.3 4.7-4.7",
+  },
+  {
+    title: "Prices for your dates",
+    text: "Ask what a room costs for the nights you have in mind and get the total for the stay.",
+    icon: "M3 12V4h8l10 10-8 8zM7.5 8.5h.01",
+  },
+  {
+    title: "Manage your booking",
+    text: "Look up a booking with its reference and email, or cancel it if your plans change.",
+    icon: "M9 4h6v3H9zM7 5.5H5.5A1.5 1.5 0 0 0 4 7v12.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V7a1.5 1.5 0 0 0-1.5-1.5H17M8 12h8M8 16h5",
   },
   {
     title: "Help during your stay",
@@ -39,9 +46,14 @@ const CONCIERGE = [
     icon: "M4 18h16M5 18a7 7 0 0 1 14 0M12 8V6M10 6h4",
   },
   {
-    title: "A person when you need one",
-    text: "If Xenia does not know the answer, she says so and gets one of the team to help.",
-    icon: "M12.5 9a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM2.5 19.5a6.5 6.5 0 0 1 13 0M16 6.2a3.5 3.5 0 0 1 0 5.6M18.5 14.5a6.5 6.5 0 0 1 3 5",
+    title: "Dining and spa",
+    text: "Find out what is on the menu, when the restaurant is open and what the spa offers.",
+    icon: "M6 3v7a2 2 0 0 0 4 0V3M8 12v9M17 3c-2 2-3 4.5-3 8h3zM17 11v10",
+  },
+  {
+    title: "Getting here and hotel rules",
+    text: "Directions, check-in and check-out times, and the hotel's policies, answered straight away.",
+    icon: "M12 21s7-6.2 7-11.5a7 7 0 1 0-14 0C5 14.8 12 21 12 21zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
   },
 ];
 
@@ -95,7 +107,7 @@ export default function Home() {
             <h2 className={sectionTitleClass}>Three kinds of room</h2>
           </div>
           <p className="max-w-[40ch] text-muted">
-            Every room comes with breakfast. Prices are per night for the room.
+            Every room comes with breakfast. Ask Xenia for prices for your dates.
           </p>
         </div>
         <ul className="mt-7 grid gap-5 md:grid-cols-3">
@@ -114,10 +126,6 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-auto pt-5 text-sm text-muted">
-                  <span aria-hidden="true" className="mb-4 block border-t border-line" />
-                  From <strong className="text-[22px] text-ink">${room.price}</strong> a night
-                </p>
               </div>
             </li>
           ))}
@@ -126,7 +134,7 @@ export default function Home() {
 
       <section id="concierge" className="mt-18 scroll-mt-6 rounded-[28px] bg-brand px-5 py-8 text-white sm:px-12 sm:py-14">
         <p className={`${eyebrowClass} text-[#BFE3DD]`}>Meet Xenia, our AI concierge</p>
-        <h2 className={`${sectionTitleClass} max-w-[20ch]`}>One chat for your whole stay</h2>
+        <h2 className={`${sectionTitleClass} max-w-[20ch]`}>What Xenia can do for you</h2>
         <ul className="mt-8 grid gap-5 md:grid-cols-3">
           {CONCIERGE.map((item) => (
             <li key={item.title} className="rounded-[20px] bg-[#0B4741] p-6">
