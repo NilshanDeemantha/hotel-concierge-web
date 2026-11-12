@@ -62,49 +62,49 @@ const EXPERIENCES = [
     id: "dining",
     title: "Dining",
     text: "Breakfast on the terrace comes with every room. Lunch and dinner are served by the sea.",
-    icon: "M6 3v7a2 2 0 0 0 4 0V3M8 12v9M17 3c-2 2-3 4.5-3 8h3zM17 11v10",
+    alt: "A table set for a meal beside the ocean",
   },
   {
     id: "spa",
     title: "Spa",
     text: "Massages and treatments in a quiet garden room, for slowing down after the beach.",
-    icon: "M12 20c-5 0-8-3-9-7 3 0 6 1 9 4 3-3 6-4 9-4-1 4-4 7-9 7zM12 17c-2-3-2-7 0-12 2 5 2 9 0 12z",
+    alt: "A massage bed prepared with towels and flowers",
   },
   {
     id: "pool",
     title: "Pool",
     text: "A pool among the palms with loungers and shade, a few steps from the sand.",
-    icon: "M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M2 20c2 0 2-1.5 4-1.5S8 20 10 20s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M8 11V5a2 2 0 0 1 4 0M16 11V5a2 2 0 0 0-4 0M8 8h8",
+    alt: "A swimming pool surrounded by palm trees",
   },
   {
-    id: "boat-rides",
+    id: "boat",
     title: "Boat rides",
     text: "Morning and sunset rides along the coast, leaving from the bay in front of the hotel.",
-    icon: "M3 17l2 4h14l2-4zM12 3v11M12 4l7 10h-7M12 7l-5 7h5",
+    alt: "A white catamaran on a calm blue sea",
   },
   {
-    id: "whale-watching",
+    id: "whale",
     title: "Whale watching",
-    text: "Early trips out to sea in season, with a chance to see blue whales and dolphins.",
-    icon: "M3 12c3-4 7-6 11-6 3 0 5 2 7 6-2 4-4 6-7 6-4 0-8-2-11-6zM17 11h.01M3 8v8",
+    text: "Early trips out to sea in season, with a chance to see whales and dolphins.",
+    alt: "A whale's tail rising out of the ocean",
   },
   {
-    id: "galle-fort",
+    id: "fort",
     title: "Galle Fort walk",
     text: "A guided walk through the old fort: ramparts, the lighthouse and narrow streets of cafes.",
-    icon: "M4 21V8h3V5h2v3h6V5h2v3h3v13zM10 21v-5a2 2 0 0 1 4 0v5",
+    alt: "The lighthouse and ramparts of Galle Fort above the sea",
   },
   {
     id: "surf",
     title: "Surf lessons",
     text: "Lessons for beginners on the gentle breaks nearby, with boards provided.",
-    icon: "M2 18c4 0 5-9 11-9 3 0 4 2 4 4-2-1-4 0-4 2s3 3 9 3",
+    alt: "A surfer riding a small wave at sunset",
   },
   {
     id: "cooking",
     title: "Cooking class",
     text: "Learn to cook a Sri Lankan rice and curry with our kitchen team, then eat it for lunch.",
-    icon: "M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM2 10h20M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2",
+    alt: "Sri Lankan rice and curry served on a banana leaf",
   },
 ];
 
@@ -214,12 +214,14 @@ export default function Home() {
         </div>
         <ul className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {EXPERIENCES.map((item) => (
-            <li key={item.id} id={item.id} className="scroll-mt-6 rounded-[20px] border border-line bg-surface p-6">
-              <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d={item.icon} />
-              </svg>
-              <h3 className="mt-4 font-serif text-[22px] font-semibold">{item.title}</h3>
-              <p className="mt-1.5 text-[15px] text-muted">{item.text}</p>
+            <li key={item.id} id={item.id} className="scroll-mt-6 overflow-hidden rounded-[20px] border border-line bg-surface">
+              <div className="relative h-40">
+                <Image src={`/images/exp-${item.id}.jpg`} alt={item.alt} fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
+              </div>
+              <div className="p-5">
+                <h3 className="font-serif text-[22px] font-semibold">{item.title}</h3>
+                <p className="mt-1.5 text-[15px] text-muted">{item.text}</p>
+              </div>
             </li>
           ))}
         </ul>
