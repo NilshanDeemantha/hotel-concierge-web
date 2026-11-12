@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Fraunces } from "next/font/google";
-import { ChatProvider } from "@/components/ChatProvider";
-import { SiteHeader } from "@/components/SiteHeader";
+import { ChatProvider } from "@/components/chat/ChatProvider";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SITE } from "@/content/site";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -10,8 +11,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Thambili Bay Hotel", template: "%s · Thambili Bay Hotel" },
-  description: "Demo AI concierge for a fictional boutique hotel on the Galle coast.",
+  title: { default: SITE.fullName, template: `%s · ${SITE.fullName}` },
+  description: SITE.description,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
