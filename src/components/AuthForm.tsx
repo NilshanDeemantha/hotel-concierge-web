@@ -7,7 +7,9 @@ import {
   signOut,
   type User,
 } from "firebase/auth";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { auth } from "@/lib/firebase";
 
@@ -18,6 +20,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const COPY = {
   login: {
     title: "Welcome back",
+    intro: "Log in to chat with Xenia, our AI concierge.",
     submit: "Log in",
     busy: "Logging in…",
     switchText: "New here?",
@@ -26,7 +29,8 @@ const COPY = {
   },
   signup: {
     title: "Create your account",
-    submit: "Sign up",
+    intro: "Create an account to chat with Xenia, our AI concierge. It takes a minute.",
+    submit: "Create account",
     busy: "Creating account…",
     switchText: "Already have an account?",
     switchLink: "Log in",
@@ -80,19 +84,21 @@ async function register(details: { name: string; phone: string; email: string; p
 const PHONE_PATTERN = "[+0-9 \\(\\)\\-]{6,20}";
 
 const inputClass =
-  "h-11 w-full rounded-full border border-line bg-bg px-4 text-base text-ink placeholder:text-muted";
-const labelClass = "flex flex-col gap-1 text-sm font-medium";
+  "h-12 w-full rounded-xl border border-line bg-bg px-3.5 text-base font-normal text-ink placeholder:text-muted";
+const labelClass = "flex flex-col gap-1.5 text-sm font-semibold";
 const primaryButtonClass =
-  "min-h-11 w-full rounded-full bg-brand px-4 font-semibold text-white disabled:opacity-60";
+  "min-h-13 w-full rounded-full bg-brand px-4 font-semibold text-white disabled:opacity-60";
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const copy = COPY[mode];
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   // undefined = still checking, null = signed out
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
@@ -117,6 +123,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         await register({ name, phone, email, password });
       }
       await signInWithEmailAndPassword(auth, email, password);
+      router.push("/");
       setPassword("");
     });
   }
@@ -129,6 +136,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           className={inputClass}
           type="text"
           autoComplete="name"
+          placeholder="Your full name"
           required
           maxLength={80}
           value={name}
@@ -136,11 +144,14 @@ export function AuthForm({ mode }: { mode: Mode }) {
         />
       </label>
       <label className={labelClass}>
-        Phone (optional)
+        <span>
+          Phone <span className="font-normal text-muted">(optional)</span>
+        </span>
         <input
           className={inputClass}
           type="tel"
           autoComplete="tel"
+          placeholder="+94 77 123 4567"
           pattern={PHONE_PATTERN}
           title="6 to 20 digits. You can use +, spaces, brackets and dashes."
           value={phone}
@@ -150,81 +161,122 @@ export function AuthForm({ mode }: { mode: Mode }) {
     </>
   );
 
-  const errorLine = (
-    <p role="alert" className="min-h-5 text-sm text-accent">
-      {error}
-    </p>
-  );
-
   return (
-    <main className="flex min-h-dvh flex-1 items-center justify-center bg-bg px-4 py-10 text-ink">
-      <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-6">
-        <p className="font-serif text-lg font-semibold text-brand">Thambili Bay</p>
-
-        {user && (
-          <>
-            <h1 className="mt-2 font-serif text-2xl font-semibold">
-              Hello{user.displayName ? `, ${user.displayName}` : ""}
-            </h1>
-            <p className="mt-2 break-words text-muted">{user.email}</p>
-            <button type="button" className={`${primaryButtonClass} mt-6`} onClick={() => signOut(auth)}>
-              Sign out
-            </button>
-          </>
-        )}
-
-        {!user && (
-          <>
-            <h1 className="mt-2 font-serif text-2xl font-semibold">{copy.title}</h1>
-            <p className="mt-2 text-sm text-muted">
-              Demo site: please don&apos;t use a password you use anywhere else.
-            </p>
-
-            <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit}>
-              {mode === "signup" && profileFields}
-              <label className={labelClass}>
-                Email
-                <input
-                  className={inputClass}
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </label>
-              <label className={labelClass}>
-                Password
-                <input
-                  className={inputClass}
-                  type="password"
-                  autoComplete={mode === "login" ? "current-password" : "new-password"}
-                  required
-                  minLength={mode === "signup" ? 8 : undefined}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </label>
-
-              {errorLine}
-
-              <button
-                type="submit"
-                className={primaryButtonClass}
-                disabled={busy || user === undefined}
-              >
-                {busy ? copy.busy : copy.submit}
+    <main className="grid flex-1 px-4 pb-10 @xl:px-8 @4xl:grid-cols-2 @4xl:gap-12 @4xl:px-12">
+      <div className="flex items-center justify-center py-8">
+        <div className="w-full max-w-[420px]">
+          {user && (
+            <div className="rounded-[20px] border border-line bg-surface p-7 shadow-[0_10px_30px_rgba(30,42,40,0.06)]">
+              <h1 className="font-serif text-3xl font-medium">
+                Hello{user.displayName ? `, ${user.displayName}` : ""}
+              </h1>
+              <p className="mt-2 break-words text-muted">{user.email}</p>
+              <button type="button" className={`${primaryButtonClass} mt-6`} onClick={() => signOut(auth)}>
+                Sign out
               </button>
-            </form>
+            </div>
+          )}
 
-            <p className="mt-6 text-center text-sm text-muted">
-              {copy.switchText}{" "}
-              <Link className="font-semibold text-brand underline" href={copy.switchHref}>
-                {copy.switchLink}
-              </Link>
-            </p>
-          </>
-        )}
+          {!user && (
+            <>
+              <h1 className="font-serif text-[40px] leading-[1.1] font-medium">{copy.title}</h1>
+              <p className="mt-2.5 text-muted">{copy.intro}</p>
+
+              <form
+                className="mt-7 flex flex-col gap-[18px] rounded-[20px] border border-line bg-surface p-7 shadow-[0_10px_30px_rgba(30,42,40,0.06)]"
+                onSubmit={handleSubmit}
+              >
+                {mode === "signup" && profileFields}
+                <label className={labelClass}>
+                  Email
+                  <input
+                    className={inputClass}
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </label>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="auth-password" className="text-sm font-semibold">
+                    Password
+                  </label>
+                  <div className="flex h-12 items-center gap-1 rounded-xl border border-line bg-bg pr-0.5 pl-3.5 focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-accent">
+                    <input
+                      id="auth-password"
+                      className="h-11 min-w-0 flex-1 bg-transparent text-base text-ink outline-none"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete={mode === "login" ? "current-password" : "new-password"}
+                      required
+                      minLength={mode === "signup" ? 8 : undefined}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-pressed={showPassword}
+                      className="flex size-11 flex-none items-center justify-center rounded-[10px] text-muted"
+                      onClick={() => setShowPassword((shown) => !shown)}
+                    >
+                      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                        <circle cx="12" cy="12" r="3" />
+                        {showPassword && <path d="M4 4l16 16" />}
+                      </svg>
+                    </button>
+                  </div>
+                  {mode === "signup" && <p className="text-[13px] font-normal text-muted">At least 8 characters.</p>}
+                </div>
+
+                <div role="alert">
+                  {error && (
+                    <p className="flex items-start gap-2 rounded-xl bg-[#FBEDE8] px-3 py-2.5 text-sm text-[#9A3A1B]">
+                      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-px flex-none">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 8v5M12 16.2v.3" />
+                      </svg>
+                      <span>{error}</span>
+                    </p>
+                  )}
+                </div>
+
+                <button type="submit" className={primaryButtonClass} disabled={busy || user === undefined}>
+                  {busy ? copy.busy : copy.submit}
+                </button>
+                <p className="text-center text-[13px] text-muted">
+                  Demo site: please don&apos;t use a password you use anywhere else.
+                </p>
+              </form>
+
+              <p className="mt-6 text-center text-[15px] text-muted">
+                {copy.switchText}{" "}
+                <Link className="font-semibold text-brand underline" href={copy.switchHref}>
+                  {copy.switchLink}
+                </Link>
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="relative hidden min-h-[640px] overflow-hidden rounded-[28px] @4xl:block">
+        <Image
+          src="/images/hero-beach.jpg"
+          alt="Palm trees on a red-earth headland above a turquoise sea"
+          fill
+          priority
+          sizes="50vw"
+          className="object-cover"
+        />
+        <div className="absolute bottom-6 left-6 max-w-[380px] rounded-[20px] bg-bg p-7">
+          <p className="text-[13px] font-bold tracking-widest text-brand uppercase">Galle coast, Sri Lanka</p>
+          <p className="mt-2.5 font-serif text-[32px] leading-[1.1] font-medium">
+            Slow days between the palms and the sea
+          </p>
+        </div>
       </div>
     </main>
   );
