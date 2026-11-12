@@ -40,7 +40,7 @@ const CONCIERGE = [
   },
   {
     title: "A person when you need one",
-    text: "If the concierge does not know the answer, it says so and passes your question to our staff.",
+    text: "If Xenia does not know the answer, she says so and gets one of the team to help.",
     icon: "M12.5 9a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM2.5 19.5a6.5 6.5 0 0 1 13 0M16 6.2a3.5 3.5 0 0 1 0 5.6M18.5 14.5a6.5 6.5 0 0 1 3 5",
   },
 ];
@@ -64,15 +64,15 @@ export default function Home() {
             Slow days on the Galle coast
           </h1>
           <p className="mt-5 max-w-[46ch] text-lg text-muted">
-            Eighteen rooms between the palms and the sea. Our concierge answers questions, checks
-            rooms and books your stay, at any hour.
+            Eighteen rooms between the palms and the sea. Xenia, our AI concierge, answers questions,
+            checks rooms and books your stay, at any hour.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <a href="#rooms" className="inline-flex min-h-13 items-center rounded-full bg-brand px-6 font-semibold text-white">
               See the rooms
             </a>
             <a href="#concierge" className="inline-flex min-h-13 items-center rounded-full border border-brand px-6 font-semibold text-brand">
-              Meet the concierge
+              Meet Xenia
             </a>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function Home() {
       </section>
 
       <section id="concierge" className="mt-18 scroll-mt-6 rounded-[28px] bg-brand px-5 py-8 text-white sm:px-12 sm:py-14">
-        <p className={`${eyebrowClass} text-[#BFE3DD]`}>Concierge</p>
+        <p className={`${eyebrowClass} text-[#BFE3DD]`}>Meet Xenia, our AI concierge</p>
         <h2 className={`${sectionTitleClass} max-w-[20ch]`}>One chat for your whole stay</h2>
         <ul className="mt-8 grid gap-5 md:grid-cols-3">
           {CONCIERGE.map((item) => (
@@ -150,8 +150,8 @@ export default function Home() {
           </svg>
           <h2 className="mt-4 font-serif text-[28px] font-medium">Dining</h2>
           <p className="mt-2 text-muted">
-            Breakfast on the terrace is included with every room. Ask the concierge about lunch,
-            dinner and room service.
+            Breakfast on the terrace is included with every room. Ask Xenia about lunch, dinner and
+            room service.
           </p>
         </article>
         <article id="spa" className="scroll-mt-6 rounded-3xl border border-line bg-surface p-8">
@@ -160,8 +160,8 @@ export default function Home() {
           </svg>
           <h2 className="mt-4 font-serif text-[28px] font-medium">Spa</h2>
           <p className="mt-2 text-muted">
-            A quiet place to slow down after the beach. The concierge can tell you what is on offer
-            and when.
+            A quiet place to slow down after the beach. Xenia can tell you what is on offer and
+            when.
           </p>
         </article>
       </section>
