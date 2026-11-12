@@ -15,10 +15,17 @@ export function SiteHeader() {
   useEffect(() => onAuthStateChanged(auth, setUser), []);
 
   return (
-    <header className="flex items-center justify-between gap-4 px-4 py-4 sm:px-8">
+    <header className="flex items-center justify-between gap-4 px-4 py-4 sm:px-8 lg:px-12">
       <Link href="/" className="font-serif text-xl font-semibold text-brand sm:text-2xl">
         Thambili Bay
       </Link>
+
+      <nav aria-label="Main" className="hidden gap-7 text-[15px] font-medium md:flex">
+        <Link href="/#rooms">Rooms</Link>
+        <Link href="/#concierge">Concierge</Link>
+        <Link href="/#dining">Dining</Link>
+        <Link href="/#spa">Spa</Link>
+      </nav>
 
       {/* Empty while checking, so "Log in" never flashes for a signed-in visitor. */}
       <nav aria-label="Account" className="flex min-h-11 items-center gap-2">

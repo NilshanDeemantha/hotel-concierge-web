@@ -19,7 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${fraunces.variable} h-full antialiased`}
     >
-      <body className="mx-auto flex min-h-full w-full max-w-5xl flex-col">
+      <body className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col">
         <SiteHeader />
         {children}
       </body>
