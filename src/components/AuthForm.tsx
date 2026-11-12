@@ -8,6 +8,7 @@ import {
   type User,
 } from "firebase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { auth } from "@/lib/firebase";
 
@@ -87,6 +88,7 @@ const primaryButtonClass =
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const copy = COPY[mode];
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -117,6 +119,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         await register({ name, phone, email, password });
       }
       await signInWithEmailAndPassword(auth, email, password);
+      router.push("/");
       setPassword("");
     });
   }
@@ -157,13 +160,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
   );
 
   return (
-    <main className="flex min-h-dvh flex-1 items-center justify-center bg-bg px-4 py-10 text-ink">
+    <main className="flex flex-1 items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-6">
-        <p className="font-serif text-lg font-semibold text-brand">Thambili Bay</p>
-
         {user && (
           <>
-            <h1 className="mt-2 font-serif text-2xl font-semibold">
+            <h1 className="font-serif text-2xl font-semibold">
               Hello{user.displayName ? `, ${user.displayName}` : ""}
             </h1>
             <p className="mt-2 break-words text-muted">{user.email}</p>
@@ -175,7 +176,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
         {!user && (
           <>
-            <h1 className="mt-2 font-serif text-2xl font-semibold">{copy.title}</h1>
+            <h1 className="font-serif text-2xl font-semibold">{copy.title}</h1>
             <p className="mt-2 text-sm text-muted">
               Demo site: please don&apos;t use a password you use anywhere else.
             </p>
