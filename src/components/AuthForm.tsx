@@ -162,7 +162,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   );
 
   return (
-    <main className="grid flex-1 px-4 pb-10 sm:px-8 lg:grid-cols-2 lg:gap-12 lg:px-12">
+    <main className="grid flex-1 px-4 pb-10 @xl:px-8 @4xl:grid-cols-2 @4xl:gap-12 @4xl:px-12">
       <div className="flex items-center justify-center py-8">
         <div className="w-full max-w-[420px]">
           {user && (
@@ -262,7 +262,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         </div>
       </div>
 
-      <div className="relative hidden min-h-[640px] overflow-hidden rounded-[28px] lg:block">
+      <div className="relative hidden min-h-[640px] overflow-hidden rounded-[28px] @4xl:block">
         <Image
           src="/images/hero-beach.jpg"
           alt="Palm trees on a red-earth headland above a turquoise sea"

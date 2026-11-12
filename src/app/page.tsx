@@ -110,12 +110,12 @@ const EXPERIENCES = [
 ];
 
 const eyebrowClass = "text-[13px] font-bold tracking-widest uppercase";
-const sectionTitleClass = "mt-1.5 font-serif text-3xl leading-tight font-medium sm:text-4xl";
+const sectionTitleClass = "mt-1.5 font-serif text-3xl leading-tight font-medium @xl:text-4xl";
 
 export default function Home() {
   return (
-    <main className="flex-1 px-4 sm:px-8 lg:px-12">
-      <section className="grid items-center gap-8 pt-4 sm:pt-8 lg:grid-cols-2 lg:gap-14">
+    <main className="flex-1 px-4 @xl:px-8 @4xl:px-12">
+      <section className="grid items-center gap-8 pt-4 @xl:pt-8 @4xl:grid-cols-2 @4xl:gap-14">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full bg-brand-soft px-3.5 py-1.5 text-[13px] font-semibold text-brand">
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -124,7 +124,7 @@ export default function Home() {
             </svg>
             Galle coast, Sri Lanka
           </p>
-          <h1 className="mt-5 max-w-[12ch] font-serif text-[44px] leading-[1.05] font-medium tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="mt-5 max-w-[12ch] font-serif text-[44px] leading-[1.05] font-medium tracking-tight @xl:text-6xl @4xl:text-7xl">
             Slow days on the Galle coast
           </h1>
           <p className="mt-5 max-w-[46ch] text-lg text-muted">
@@ -140,7 +140,7 @@ export default function Home() {
             </a>
           </div>
         </div>
-        <div className="relative h-64 overflow-hidden rounded-[28px] sm:h-96 lg:h-[460px]">
+        <div className="relative h-64 overflow-hidden rounded-[28px] @xl:h-96 @4xl:h-[460px]">
           <Image
             src="/images/hero-beach.jpg"
             alt="Palm trees on a red-earth headland above a turquoise sea"
@@ -162,7 +162,7 @@ export default function Home() {
             Every room comes with breakfast. Ask Xenia for prices for your dates.
           </p>
         </div>
-        <ul className="mt-7 grid gap-5 md:grid-cols-3">
+        <ul className="mt-7 grid gap-5 @3xl:grid-cols-3">
           {ROOMS.map((room) => (
             <li key={room.name} className="flex flex-col overflow-hidden rounded-[20px] border border-line bg-surface">
               <div className="relative h-52">
@@ -184,10 +184,10 @@ export default function Home() {
         </ul>
       </section>
 
-      <section id="concierge" className="mt-18 scroll-mt-6 rounded-[28px] bg-brand px-5 py-8 text-white sm:px-12 sm:py-14">
+      <section id="concierge" className="mt-18 scroll-mt-6 rounded-[28px] bg-brand px-5 py-8 text-white @xl:px-12 @xl:py-14">
         <p className={`${eyebrowClass} text-[#BFE3DD]`}>Meet Xenia, our AI concierge</p>
         <h2 className={`${sectionTitleClass} max-w-[20ch]`}>What Xenia can do for you</h2>
-        <ul className="mt-8 grid gap-5 md:grid-cols-3">
+        <ul className="mt-8 grid gap-5 @3xl:grid-cols-3">
           {CONCIERGE.map((item) => (
             <li key={item.title} className="rounded-[20px] bg-[#0B4741] p-6">
               <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F2B872" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -213,7 +213,7 @@ export default function Home() {
             Ask Xenia for times, prices and how to join any of these.
           </p>
         </div>
-        <ul className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-7 grid gap-5 @xl:grid-cols-2 @4xl:grid-cols-4">
           {EXPERIENCES.map((item) => (
             <li key={item.id} id={item.id} className="scroll-mt-6 overflow-hidden rounded-[20px] border border-line bg-surface">
               <div className="relative h-40">

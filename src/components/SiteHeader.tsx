@@ -15,12 +15,12 @@ export function SiteHeader() {
   useEffect(() => onAuthStateChanged(auth, setUser), []);
 
   return (
-    <header className="flex items-center justify-between gap-4 px-4 py-4 sm:px-8 lg:px-12">
-      <Link href="/" className="font-serif text-xl font-semibold text-brand sm:text-2xl">
+    <header className="flex items-center justify-between gap-4 px-4 py-4 @xl:px-8 @4xl:px-12">
+      <Link href="/" className="font-serif text-xl font-semibold text-brand @xl:text-2xl">
         Thambili Bay
       </Link>
 
-      <nav aria-label="Main" className="hidden gap-7 text-[15px] font-medium md:flex">
+      <nav aria-label="Main" className="hidden gap-7 text-[15px] font-medium @3xl:flex">
         <Link href="/#rooms">Rooms</Link>
         <Link href="/#concierge">Xenia</Link>
         <Link href="/#experiences">Experiences</Link>
@@ -35,7 +35,7 @@ export function SiteHeader() {
         )}
         {user && (
           <>
-            <span className="hidden max-w-40 truncate text-sm text-muted sm:inline">
+            <span className="hidden max-w-40 truncate text-sm text-muted @xl:inline">
               {user.displayName ?? user.email}
             </span>
             <button

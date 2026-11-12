@@ -77,9 +77,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   return (
     <ChatContext.Provider value={{ user, open, setOpen }}>
-      {/* On very wide screens the page moves over; on smaller ones the panel sits on top. */}
-      <div className={showPanel ? "xl:mr-[380px]" : undefined}>
-        <div className="mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col">{children}</div>
+      {/* On desktop the page moves over so the sidebar never covers it. The inner box is a
+          container, so the page lays itself out for the width that is left. */}
+      <div className={showPanel ? "lg:mr-[380px]" : undefined}>
+        <div className="@container mx-auto flex min-h-dvh w-full max-w-[1200px] flex-col">{children}</div>
       </div>
       {showPanel && user ? <ChatPanel user={user} onClose={() => setOpen(false)} /> : <ChatLauncher />}
     </ChatContext.Provider>
@@ -121,7 +122,7 @@ function ChatPanel({ user, onClose }: { user: User; onClose: () => void }) {
   return (
     <aside
       aria-label="Chat with Xenia, the AI concierge"
-      className="fixed inset-0 z-50 flex flex-col bg-bg lg:left-auto lg:w-[380px] lg:border-l lg:border-line lg:shadow-[-12px_0_40px_rgba(30,42,40,0.12)]"
+      className="fixed inset-0 z-50 flex flex-col bg-bg lg:left-auto lg:w-[380px] lg:border-l lg:border-line"
     >
       <div className="flex items-center gap-3 bg-brand py-3 pr-2 pl-2 text-white lg:pl-4">
         <button
