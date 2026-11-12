@@ -20,7 +20,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const COPY = {
   login: {
     title: "Welcome back",
-    intro: "Log in to your Thambili Bay account.",
+    intro: "Log in to chat with Xenia, our AI concierge.",
     submit: "Log in",
     busy: "Logging in…",
     switchText: "New here?",
@@ -29,7 +29,7 @@ const COPY = {
   },
   signup: {
     title: "Create your account",
-    intro: "It takes a minute. Only your name, email and a password are needed.",
+    intro: "Create an account to chat with Xenia, our AI concierge. It takes a minute.",
     submit: "Create account",
     busy: "Creating account…",
     switchText: "Already have an account?",

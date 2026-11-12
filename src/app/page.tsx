@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ChatCta } from "@/components/ChatProvider";
 
 const ROOMS = [
   {
@@ -131,11 +132,11 @@ export default function Home() {
             checks rooms and books your stay, at any hour.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <a href="#rooms" className="inline-flex min-h-13 items-center rounded-full bg-brand px-6 font-semibold text-white">
+            <ChatCta className="inline-flex min-h-13 items-center gap-2 rounded-full bg-brand px-6 font-semibold text-white">
+              Chat with Xenia
+            </ChatCta>
+            <a href="#rooms" className="inline-flex min-h-13 items-center rounded-full border border-brand px-6 font-semibold text-brand">
               See the rooms
-            </a>
-            <a href="#concierge" className="inline-flex min-h-13 items-center rounded-full border border-brand px-6 font-semibold text-brand">
-              Meet Xenia
             </a>
           </div>
         </div>
@@ -197,9 +198,9 @@ export default function Home() {
             </li>
           ))}
         </ul>
-        <p className="mt-7 inline-flex rounded-full bg-[#0B4741] px-4 py-2 text-sm font-semibold text-[#F2B872]">
-          The chat opens here soon
-        </p>
+        <ChatCta className="mt-7 inline-flex min-h-13 items-center gap-2 rounded-full bg-white px-6 font-semibold text-brand">
+          Chat with Xenia
+        </ChatCta>
       </section>
 
       <section id="experiences" className="mt-18 scroll-mt-6">
