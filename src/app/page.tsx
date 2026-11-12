@@ -46,14 +46,65 @@ const CONCIERGE = [
     icon: "M4 18h16M5 18a7 7 0 0 1 14 0M12 8V6M10 6h4",
   },
   {
-    title: "Dining and spa",
-    text: "Find out what is on the menu, when the restaurant is open and what the spa offers.",
+    title: "Dining, spa and activities",
+    text: "Ask about the restaurant, the spa, the pool, boat rides and anything else there is to do.",
     icon: "M6 3v7a2 2 0 0 0 4 0V3M8 12v9M17 3c-2 2-3 4.5-3 8h3zM17 11v10",
   },
   {
     title: "Getting here and hotel rules",
     text: "Directions, check-in and check-out times, and the hotel's policies, answered straight away.",
     icon: "M12 21s7-6.2 7-11.5a7 7 0 1 0-14 0C5 14.8 12 21 12 21zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
+  },
+];
+
+const EXPERIENCES = [
+  {
+    id: "dining",
+    title: "Dining",
+    text: "Breakfast on the terrace comes with every room. Lunch and dinner are served by the sea.",
+    icon: "M6 3v7a2 2 0 0 0 4 0V3M8 12v9M17 3c-2 2-3 4.5-3 8h3zM17 11v10",
+  },
+  {
+    id: "spa",
+    title: "Spa",
+    text: "Massages and treatments in a quiet garden room, for slowing down after the beach.",
+    icon: "M12 20c-5 0-8-3-9-7 3 0 6 1 9 4 3-3 6-4 9-4-1 4-4 7-9 7zM12 17c-2-3-2-7 0-12 2 5 2 9 0 12z",
+  },
+  {
+    id: "pool",
+    title: "Pool",
+    text: "A pool among the palms with loungers and shade, a few steps from the sand.",
+    icon: "M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M2 20c2 0 2-1.5 4-1.5S8 20 10 20s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M8 11V5a2 2 0 0 1 4 0M16 11V5a2 2 0 0 0-4 0M8 8h8",
+  },
+  {
+    id: "boat-rides",
+    title: "Boat rides",
+    text: "Morning and sunset rides along the coast, leaving from the bay in front of the hotel.",
+    icon: "M3 17l2 4h14l2-4zM12 3v11M12 4l7 10h-7M12 7l-5 7h5",
+  },
+  {
+    id: "whale-watching",
+    title: "Whale watching",
+    text: "Early trips out to sea in season, with a chance to see blue whales and dolphins.",
+    icon: "M3 12c3-4 7-6 11-6 3 0 5 2 7 6-2 4-4 6-7 6-4 0-8-2-11-6zM17 11h.01M3 8v8",
+  },
+  {
+    id: "galle-fort",
+    title: "Galle Fort walk",
+    text: "A guided walk through the old fort: ramparts, the lighthouse and narrow streets of cafes.",
+    icon: "M4 21V8h3V5h2v3h6V5h2v3h3v13zM10 21v-5a2 2 0 0 1 4 0v5",
+  },
+  {
+    id: "surf",
+    title: "Surf lessons",
+    text: "Lessons for beginners on the gentle breaks nearby, with boards provided.",
+    icon: "M2 18c4 0 5-9 11-9 3 0 4 2 4 4-2-1-4 0-4 2s3 3 9 3",
+  },
+  {
+    id: "cooking",
+    title: "Cooking class",
+    text: "Learn to cook a Sri Lankan rice and curry with our kitchen team, then eat it for lunch.",
+    icon: "M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM2 10h20M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2",
   },
 ];
 
@@ -151,27 +202,27 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="mt-18 grid gap-5 md:grid-cols-2">
-        <article id="dining" className="scroll-mt-6 rounded-3xl border border-line bg-surface p-8">
-          <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 3v7a2 2 0 0 0 4 0V3M8 12v9M17 3c-2 2-3 4.5-3 8h3zM17 11v10" />
-          </svg>
-          <h2 className="mt-4 font-serif text-[28px] font-medium">Dining</h2>
-          <p className="mt-2 text-muted">
-            Breakfast on the terrace is included with every room. Ask Xenia about lunch, dinner and
-            room service.
+      <section id="experiences" className="mt-18 scroll-mt-6">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className={`${eyebrowClass} text-brand`}>During your stay</p>
+            <h2 className={sectionTitleClass}>More than a room</h2>
+          </div>
+          <p className="max-w-[40ch] text-muted">
+            Ask Xenia for times, prices and how to join any of these.
           </p>
-        </article>
-        <article id="spa" className="scroll-mt-6 rounded-3xl border border-line bg-surface p-8">
-          <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 20c-5 0-8-3-9-7 3 0 6 1 9 4 3-3 6-4 9-4-1 4-4 7-9 7zM12 17c-2-3-2-7 0-12 2 5 2 9 0 12z" />
-          </svg>
-          <h2 className="mt-4 font-serif text-[28px] font-medium">Spa</h2>
-          <p className="mt-2 text-muted">
-            A quiet place to slow down after the beach. Xenia can tell you what is on offer and
-            when.
-          </p>
-        </article>
+        </div>
+        <ul className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {EXPERIENCES.map((item) => (
+            <li key={item.id} id={item.id} className="scroll-mt-6 rounded-[20px] border border-line bg-surface p-6">
+              <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d={item.icon} />
+              </svg>
+              <h3 className="mt-4 font-serif text-[22px] font-semibold">{item.title}</h3>
+              <p className="mt-1.5 text-[15px] text-muted">{item.text}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <footer className="mt-18 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-7 pb-10">

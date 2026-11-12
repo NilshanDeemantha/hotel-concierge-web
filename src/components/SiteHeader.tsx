@@ -22,9 +22,8 @@ export function SiteHeader() {
 
       <nav aria-label="Main" className="hidden gap-7 text-[15px] font-medium md:flex">
         <Link href="/#rooms">Rooms</Link>
-        <Link href="/#concierge">Concierge</Link>
-        <Link href="/#dining">Dining</Link>
-        <Link href="/#spa">Spa</Link>
+        <Link href="/#concierge">Xenia</Link>
+        <Link href="/#experiences">Experiences</Link>
       </nav>
 
       {/* Empty while checking, so "Log in" never flashes for a signed-in visitor. */}
