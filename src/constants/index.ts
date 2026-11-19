@@ -11,6 +11,9 @@ export const SECTION_IDS = {
 
 export const CHAT_STORAGE_KEY = "chat-panel";
 
+// Same limit as the server, which is the check that counts.
+export const MAX_MESSAGE_CHARS = 1000;
+
 // Same pattern as the server, which is the check that counts.
 export const PHONE_PATTERN = "[+0-9 \\(\\)\\-]{6,20}";
 

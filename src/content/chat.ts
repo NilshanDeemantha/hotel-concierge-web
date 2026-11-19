@@ -11,7 +11,7 @@ export const CHAT_TEXT = {
   greetingBody:
     "! I'm Xenia, the concierge at Thambili Bay. Soon I'll be able to check rooms, make a booking and help during your stay, right here.",
   messageLabel: "Type your message",
-  messagePlaceholder: "Messages open soon",
+  messagePlaceholder: "Write to Xenia",
   send: "Send",
   disclaimer: "Xenia is an AI and can make mistakes. Demo data only.",
 } as const;

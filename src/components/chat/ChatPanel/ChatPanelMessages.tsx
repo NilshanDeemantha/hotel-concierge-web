@@ -1,7 +1,7 @@
 import { CHAT_TEXT } from "@/content/chat";
 import type { ChatPanelMessagesProps } from "./ChatPanel.types";
 
-export function ChatPanelMessages({ firstName }: ChatPanelMessagesProps) {
+export function ChatPanelMessages({ firstName, messages }: ChatPanelMessagesProps) {
   return (
     <div aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto p-4">
       <p className="self-center rounded-full bg-brand-soft px-3 py-1.5 text-center text-[12.5px] text-muted">
@@ -12,6 +12,14 @@ export function ChatPanelMessages({ firstName }: ChatPanelMessagesProps) {
         {firstName ? ` ${firstName}` : ""}
         {CHAT_TEXT.greetingBody}
       </p>
+      {messages.map((text, index) => (
+        <p
+          key={index}
+          className="max-w-[85%] self-end rounded-2xl rounded-br-sm bg-brand px-3.5 py-2.5 text-[15px] break-words whitespace-pre-wrap text-white"
+        >
+          {text}
+        </p>
+      ))}
     </div>
   );
 }
