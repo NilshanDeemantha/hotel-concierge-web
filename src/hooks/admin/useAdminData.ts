@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { CONVERSATIONS_TEXT } from "@/content/admin";
 import { db } from "@/lib/firebase";
-import type { AdminConversation, AdminMessage, AdminRoom, AvailabilityDays } from "@/lib/admin-api";
+import type { AdminConversation, AdminMessage } from "@/lib/admin-api";
 import { useLiveQuery } from "./useLiveQuery";
 
 // The admin screens read Firestore directly (the rules allow admins); writes go through the server.
@@ -44,21 +44,6 @@ const toMessages = (s: QuerySnapshot): AdminMessage[] =>
 
 export const useMessages = (conversationId: string | undefined) =>
   useLiveQuery(conversationId ?? null, messagesQuery, toMessages);
-
-const roomsQuery = () => query(collection(db, "rooms"));
-const toRooms = (s: QuerySnapshot): AdminRoom[] =>
-  s.docs
-    .map((d) => ({ id: d.id, number: d.get("number"), type: d.get("type"), active: d.get("active") === true }))
-    .sort((a, b) => a.number.localeCompare(b.number, undefined, { numeric: true }));
-
-export const useRooms = () => useLiveQuery("all", roomsQuery, toRooms);
-
-const availabilityQuery = (month: string) => query(collection(db, "availability"), where("month", "==", month));
-const toAvailability = (s: QuerySnapshot): AvailabilityDays =>
-  Object.fromEntries(s.docs.map((d) => [d.get("roomId"), d.get("days") ?? {}]));
-
-/** One month (YYYY-MM) of bookings and blocks, by room id then day. */
-export const useAvailability = (month: string) => useLiveQuery(month, availabilityQuery, toAvailability);
 
 /**
  * Guest names by uid, fetched once per uid for as long as the screen is open.
