@@ -1,7 +1,7 @@
 import { idToken, post } from "@/lib/api";
 
 export type AdminRoom = { id: string; number: string; type: string; active: boolean };
-export type AdminConversation = { id: string; uid: string; name: string; messageCount: number; updatedAt: string };
+export type AdminConversation = { id: string; uid: string; name: string; messageCount: number; updatedAt: string | null };
 export type AdminMessage = { id: string; role: string; content: string; createdAt: string | null };
 export type DayEntry = { status: "booked" | "blocked"; note?: string };
 /** days is keyed by room id, then by two-digit day of the month. */
