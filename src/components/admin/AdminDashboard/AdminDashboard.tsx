@@ -22,12 +22,12 @@ export function AdminDashboard() {
   const router = useRouter();
   const [section, setSection] = useState<Section>("conversations");
 
-  // Cosmetic only: every admin function on the server checks the admin claim itself.
+  // Cosmetic only: the Firestore rules and every admin function on the server check the admin claim.
   useEffect(() => {
     if (isAdmin === false) router.replace(ROUTES.login);
   }, [isAdmin, router]);
 
-  // No admin data is requested until the claim is confirmed, because the sections only mount then.
+  // No admin listener starts until the claim is confirmed, because the sections only mount then.
   if (!isAdmin) {
     return (
       <main className="px-4 py-8 @xl:px-8">

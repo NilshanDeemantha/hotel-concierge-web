@@ -22,7 +22,8 @@ export function AuthForm({ mode }: AuthFormProps) {
   const isAdmin = useIsAdmin();
   const router = useRouter();
 
-  // A signed-in admin belongs on the dashboard, not on this page.
+  // A signed-in admin belongs on the dashboard, not on this page. This is the only redirect for an
+  // admin, also right after signing in here; useAuthForm sends everyone else home.
   useEffect(() => {
     if (isAdmin) router.replace(ROUTES.admin);
   }, [isAdmin, router]);

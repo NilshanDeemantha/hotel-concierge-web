@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { LoadError } from "@/components/admin/LoadError";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { TextField } from "@/components/ui/TextField";
 import { inputClass, labelClass } from "@/components/ui/TextField/TextField.styles";
 import { ADMIN_TEXT, ROOM_TYPES, ROOMS_TEXT } from "@/content/admin";
-import { listRooms, saveRoom, type AdminRoom } from "@/lib/admin-api";
+import { useRooms } from "@/hooks/admin/useAdminData";
+import { saveRoom, type AdminRoom } from "@/lib/admin-api";
 import { authCardClass, primaryButtonClass, smallButtonClass } from "@/styles/classes";
 import { errorMessage } from "@/utils/auth-errors";
 
@@ -14,23 +16,18 @@ const ROOM_NUMBER_PATTERN = "[A-Za-z0-9\\-]{1,10}";
 const emptyRoom = { number: "", type: ROOM_TYPES[0] as string, active: true };
 
 export function RoomsTab() {
-  const [rooms, setRooms] = useState<AdminRoom[]>();
+  const { data: rooms, error: loadError, loading, retry } = useRooms();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState(emptyRoom);
   const [editing, setEditing] = useState<AdminRoom>();
 
-  useEffect(() => {
-    listRooms().then(setRooms, (e) => setError(errorMessage(e)));
-  }, []);
-
-  // Saves, then reloads the list so the table shows what the server stored.
+  // The table is live, so it shows the saved room as soon as the server stores it.
   async function save(room: Parameters<typeof saveRoom>[0], done: () => void) {
     setError("");
     setBusy(true);
     try {
       await saveRoom(room);
-      setRooms(await listRooms());
       done();
     } catch (e) {
       setError(errorMessage(e));
@@ -59,9 +56,10 @@ export function RoomsTab() {
 
   return (
     <div className="flex flex-col gap-6">
+      <LoadError message={loadError} onRetry={retry} />
       <ErrorAlert message={error} />
 
-      {!rooms && !error && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
+      {loading && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
       {rooms?.length === 0 && <p className="text-muted">{ROOMS_TEXT.empty}</p>}
       {rooms && rooms.length > 0 && (
         // One form for the row being edited, so its inputs sit inside the table cells.

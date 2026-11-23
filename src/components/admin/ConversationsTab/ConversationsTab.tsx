@@ -1,43 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { useState } from "react";
+import { LoadError } from "@/components/admin/LoadError";
 import { ADMIN_TEXT, CONVERSATIONS_TEXT } from "@/content/admin";
-import { getMessages, listConversations, type AdminConversation, type AdminMessage } from "@/lib/admin-api";
-import { errorMessage } from "@/utils/auth-errors";
+import { useConversations, useGuestNames, useMessages } from "@/hooks/admin/useAdminData";
 
-const formatDate = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : ADMIN_TEXT.noDate);
-
-type Thread = { id: string; messages?: AdminMessage[]; error?: string };
+const formatDate = (date: Date | null) => (date ? date.toLocaleString() : ADMIN_TEXT.noDate);
 
 export function ConversationsTab() {
-  const [conversations, setConversations] = useState<AdminConversation[]>();
-  const [listError, setListError] = useState("");
+  const list = useConversations();
   const [selected, setSelected] = useState<string>();
-  const [thread, setThread] = useState<Thread>();
+  const thread = useMessages(selected);
+  const names = useGuestNames(list.data?.map((c) => c.uid) ?? []);
+  const conversations = list.data;
 
-  useEffect(() => {
-    listConversations().then(setConversations, (e) => setListError(errorMessage(e)));
-  }, []);
-
-  useEffect(() => {
-    if (!selected) return;
-    // Ignore a slow answer for a conversation that is no longer the selected one.
-    let active = true;
-    getMessages(selected).then(
-      (messages) => active && setThread({ id: selected, messages }),
-      (e) => active && setThread({ id: selected, error: errorMessage(e) }),
-    );
-    return () => {
-      active = false;
-    };
-  }, [selected]);
-
-  if (listError) return <ErrorAlert message={listError} />;
+  if (list.error) return <LoadError message={list.error} onRetry={list.retry} />;
   if (!conversations) return <p className="text-muted">{ADMIN_TEXT.loading}</p>;
   if (conversations.length === 0) return <p className="text-muted">{CONVERSATIONS_TEXT.empty}</p>;
 
-  const current = thread?.id === selected ? thread : undefined;
   return (
     <div className="grid gap-6 @4xl:grid-cols-[320px_1fr]">
       <ul aria-label={CONVERSATIONS_TEXT.listLabel} className="flex flex-col gap-2">
@@ -51,7 +31,7 @@ export function ConversationsTab() {
               }`}
               onClick={() => setSelected(c.id)}
             >
-              <span className="block font-semibold">{c.name}</span>
+              <span className="block font-semibold">{names[c.uid] ?? ADMIN_TEXT.loading}</span>
               <span className="block text-sm text-muted">
                 {CONVERSATIONS_TEXT.messages(c.messageCount)} · {CONVERSATIONS_TEXT.lastActivity}{" "}
                 {formatDate(c.updatedAt)}
@@ -61,14 +41,14 @@ export function ConversationsTab() {
         ))}
       </ul>
 
-      <section>
+      <section className="flex flex-col gap-3">
         {!selected && <p className="text-muted">{CONVERSATIONS_TEXT.choose}</p>}
-        {selected && !current && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
-        {current?.error && <ErrorAlert message={current.error} />}
-        {current?.messages?.length === 0 && <p className="text-muted">{CONVERSATIONS_TEXT.emptyThread}</p>}
-        {current?.messages && current.messages.length > 0 && (
+        {thread.loading && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
+        <LoadError message={thread.error} onRetry={thread.retry} />
+        {thread.data?.length === 0 && <p className="text-muted">{CONVERSATIONS_TEXT.emptyThread}</p>}
+        {thread.data && thread.data.length > 0 && (
           <ol className="flex flex-col gap-3">
-            {current.messages.map((m) => (
+            {thread.data.map((m) => (
               <li key={m.id} className="rounded-xl border border-line bg-surface p-3">
                 <p className="text-sm text-muted">
                   <span className="font-semibold text-ink">{CONVERSATIONS_TEXT.roles[m.role] ?? m.role}</span> ·{" "}

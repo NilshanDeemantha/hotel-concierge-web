@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { LoadError } from "@/components/admin/LoadError";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { TextField } from "@/components/ui/TextField";
 import { inputClass, labelClass } from "@/components/ui/TextField/TextField.styles";
 import { ADMIN_TEXT, CALENDAR_TEXT, STATUS_TEXT } from "@/content/admin";
-import { getAvailability, listRooms, setAvailability, type AdminRoom, type AvailabilityMonth } from "@/lib/admin-api";
-import { authCardClass, primaryButtonClass, smallButtonClass } from "@/styles/classes";
+import { useAvailability, useRooms } from "@/hooks/admin/useAdminData";
+import { setAvailability } from "@/lib/admin-api";
+import { authCardClass, primaryButtonClass } from "@/styles/classes";
 import { errorMessage } from "@/utils/auth-errors";
 import { cellClass } from "./CalendarTab.styles";
 
@@ -26,42 +28,11 @@ function daysOf(month: string) {
 
 export function CalendarTab() {
   const [month, setMonth] = useState(thisMonth);
-  const [rooms, setRooms] = useState<AdminRoom[]>();
-  const [data, setData] = useState<AvailabilityMonth>();
-  const [version, setVersion] = useState(0);
-  const [roomsVersion, setRoomsVersion] = useState(0);
-  const [roomsError, setRoomsError] = useState("");
-  const [monthError, setMonthError] = useState("");
+  const allRooms = useRooms();
+  const availability = useAvailability(month);
   const [form, setForm] = useState({ roomId: "", from: "", to: "", status: "booked" as Status, note: "" });
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    listRooms().then(
-      (all) => active && setRooms(all.filter((room) => room.active)),
-      (e) => active && setRoomsError(errorMessage(e)),
-    );
-    return () => {
-      active = false;
-    };
-  }, [roomsVersion]);
-
-  useEffect(() => {
-    // Ignore a slow answer for a month that is no longer shown.
-    let active = true;
-    getAvailability(month).then(
-      ({ days }) => {
-        if (!active) return;
-        setData({ month, days });
-        setMonthError("");
-      },
-      (e) => active && setMonthError(errorMessage(e)),
-    );
-    return () => {
-      active = false;
-    };
-  }, [month, version]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -69,8 +40,8 @@ export function CalendarTab() {
     setFormError("");
     setBusy(true);
     try {
+      // The grid is live, so the saved nights show as soon as the server stores them.
       await setAvailability({ ...form, note: form.note || undefined });
-      setVersion((v) => v + 1);
     } catch (e) {
       // The server's message, such as a night already taken (409), is written to be shown.
       setFormError(errorMessage(e));
@@ -79,7 +50,8 @@ export function CalendarTab() {
     }
   }
 
-  const shown = data?.month === month ? data : undefined;
+  const rooms = allRooms.data?.filter((room) => room.active);
+  const shown = availability.data;
   const days = daysOf(month);
 
   return (
@@ -93,27 +65,14 @@ export function CalendarTab() {
           value={month}
           onChange={(e) => {
             if (!e.target.value) return;
-            setMonthError("");
             setMonth(e.target.value);
           }}
         />
       </label>
 
-      <ErrorAlert message={roomsError} />
-      {roomsError && (
-        <button
-          type="button"
-          className={`${smallButtonClass} self-start`}
-          onClick={() => {
-            setRoomsError("");
-            setRoomsVersion((v) => v + 1);
-          }}
-        >
-          {ADMIN_TEXT.retry}
-        </button>
-      )}
-      <ErrorAlert message={monthError} />
-      {((!rooms && !roomsError) || (!shown && !monthError)) && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
+      <LoadError message={allRooms.error} onRetry={allRooms.retry} />
+      <LoadError message={availability.error} onRetry={availability.retry} />
+      {(allRooms.loading || availability.loading) && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
       {rooms?.length === 0 && <p className="text-muted">{CALENDAR_TEXT.noRooms}</p>}
       {rooms && rooms.length > 0 && shown && (
         <div>
@@ -134,7 +93,7 @@ export function CalendarTab() {
                   <tr key={room.id}>
                     <th className="p-1 pr-3 text-left font-semibold whitespace-nowrap">{room.number}</th>
                     {days.map((day) => {
-                      const entry = shown.days[room.id]?.[day];
+                      const entry = shown[room.id]?.[day];
                       const status: Status = entry?.status ?? "free";
                       const date = `${month}-${day}`;
                       const label = CALENDAR_TEXT.cell(room.number, date, STATUS_TEXT[status].label, entry?.note);

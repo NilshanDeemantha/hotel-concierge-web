@@ -38,12 +38,13 @@ export function useAuthForm(mode: Mode) {
         await register({ name, phone, email, password });
       }
       const { user } = await signInWithEmailAndPassword(auth, email, password);
-      // Cosmetic routing only; the server checks the admin claim on every admin call.
+      // Cosmetic routing only; the rules and the server check the admin claim. The token from a fresh
+      // sign-in already carries the claims, so no refresh. AuthForm sends an admin to the dashboard.
       const admin = await user
-        .getIdTokenResult(true)
+        .getIdTokenResult()
         .then((t) => t.claims.admin === true)
         .catch(() => false);
-      router.push(admin ? ROUTES.admin : ROUTES.home);
+      if (!admin) router.push(ROUTES.home);
       setPassword("");
     });
   }

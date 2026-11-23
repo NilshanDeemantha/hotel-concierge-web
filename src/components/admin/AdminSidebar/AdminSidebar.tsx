@@ -2,6 +2,8 @@
 
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { ROUTES } from "@/constants";
 import { ADMIN_TEXT } from "@/content/admin";
 import { useAuthUser } from "@/hooks/useAuthUser";
@@ -13,9 +15,19 @@ import type { AdminSidebarProps, Section } from "./AdminSidebar.types";
 export function AdminSidebar({ section, onSelect }: AdminSidebarProps) {
   const user = useAuthUser();
   const router = useRouter();
+  const [signOutError, setSignOutError] = useState("");
 
+  function handleSignOut() {
+    setSignOutError("");
+    signOut(auth).then(
+      () => router.replace(ROUTES.login),
+      () => setSignOutError(ADMIN_TEXT.signOutFailed),
+    );
+  }
+
+  // A plain div: the nav inside is the landmark.
   return (
-    <aside className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-line bg-surface px-4 py-3 @3xl:sticky @3xl:top-0 @3xl:h-dvh @3xl:w-60 @3xl:shrink-0 @3xl:flex-col @3xl:items-stretch @3xl:border-r @3xl:border-b-0 @3xl:py-6">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-line bg-surface px-4 py-3 @3xl:sticky @3xl:top-0 @3xl:h-dvh @3xl:w-60 @3xl:shrink-0 @3xl:flex-col @3xl:items-stretch @3xl:border-r @3xl:border-b-0 @3xl:overflow-y-auto @3xl:py-6">
       <p className="font-serif text-2xl font-medium text-brand">{ADMIN_TEXT.title}</p>
       <nav aria-label={ADMIN_TEXT.navLabel} className="flex flex-wrap gap-1 @3xl:flex-col">
         {(Object.keys(ADMIN_TEXT.sections) as Section[]).map((key) => (
@@ -34,14 +46,11 @@ export function AdminSidebar({ section, onSelect }: AdminSidebarProps) {
       </nav>
       <div className="flex min-w-0 items-center gap-3 @3xl:mt-auto @3xl:flex-col @3xl:items-stretch">
         {user?.email && <span className="min-w-0 truncate text-sm text-muted">{user.email}</span>}
-        <button
-          type="button"
-          className={smallButtonClass}
-          onClick={() => signOut(auth).then(() => router.push(ROUTES.login))}
-        >
+        <button type="button" className={smallButtonClass} onClick={handleSignOut}>
           {ADMIN_TEXT.signOut}
         </button>
+        <ErrorAlert message={signOutError} />
       </div>
-    </aside>
+    </div>
   );
 }
