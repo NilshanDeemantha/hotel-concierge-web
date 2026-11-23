@@ -10,6 +10,7 @@ export const CHAT_TEXT = {
   greetingStart: "Hello",
   greetingBody:
     "! I'm Xenia, the concierge at Thambili Bay. Soon I'll be able to check rooms, make a booking and help during your stay, right here.",
+  typing: "Xenia is typing",
   messageLabel: "Type your message",
   messagePlaceholder: "Write to Xenia",
   send: "Send",
