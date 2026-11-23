@@ -3,3 +3,4 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Local testing only: set this to use the Firebase emulator instead of the live project.
 export const AUTH_EMULATOR_URL = process.env.NEXT_PUBLIC_AUTH_EMULATOR_URL;
+export const FIRESTORE_EMULATOR_HOST = process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST;
