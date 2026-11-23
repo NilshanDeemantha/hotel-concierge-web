@@ -1,4 +1,4 @@
-export const ROUTES = { home: "/", login: "/login", signup: "/signup" } as const;
+export const ROUTES = { home: "/", login: "/login", signup: "/signup", admin: "/admin" } as const;
 
 /** Anchor ids of the home page sections, shared by the sections and the header links. */
 export const SECTION_IDS = {
