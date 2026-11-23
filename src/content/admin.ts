@@ -14,8 +14,10 @@ export const ADMIN_TEXT = {
   save: "Save",
   saving: "Saving…",
   cancel: "Cancel",
-  tabsLabel: "Admin sections",
-  tabs: { conversations: "Conversations", rooms: "Rooms", calendar: "Calendar" },
+  retry: "Try again",
+  signOut: "Sign out",
+  navLabel: "Admin sections",
+  sections: { conversations: "Conversations", rooms: "Rooms", calendar: "Calendar" },
 } as const;
 
 export const CONVERSATIONS_TEXT = {
@@ -53,7 +55,7 @@ export const STATUS_TEXT = {
 export const CALENDAR_TEXT = {
   month: "Month",
   room: "Room",
-  noRooms: "No active rooms. Add one in the Rooms tab.",
+  noRooms: "No active rooms. Add one in the Rooms section.",
   legend: "B = booked, X = blocked, empty = free.",
   cell: (room: string, date: string, status: string, note?: string) =>
     `Room ${room}, ${date}: ${status}${note ? ` (${note})` : ""}`,

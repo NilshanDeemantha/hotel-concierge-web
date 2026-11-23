@@ -6,7 +6,7 @@ import { TextField } from "@/components/ui/TextField";
 import { inputClass, labelClass } from "@/components/ui/TextField/TextField.styles";
 import { ADMIN_TEXT, CALENDAR_TEXT, STATUS_TEXT } from "@/content/admin";
 import { getAvailability, listRooms, setAvailability, type AdminRoom, type AvailabilityMonth } from "@/lib/admin-api";
-import { authCardClass, primaryButtonClass } from "@/styles/classes";
+import { authCardClass, primaryButtonClass, smallButtonClass } from "@/styles/classes";
 import { errorMessage } from "@/utils/auth-errors";
 import { cellClass } from "./CalendarTab.styles";
 
@@ -29,21 +29,34 @@ export function CalendarTab() {
   const [rooms, setRooms] = useState<AdminRoom[]>();
   const [data, setData] = useState<AvailabilityMonth>();
   const [version, setVersion] = useState(0);
-  const [loadError, setLoadError] = useState("");
+  const [roomsVersion, setRoomsVersion] = useState(0);
+  const [roomsError, setRoomsError] = useState("");
+  const [monthError, setMonthError] = useState("");
   const [form, setForm] = useState({ roomId: "", from: "", to: "", status: "booked" as Status, note: "" });
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    listRooms().then((all) => setRooms(all.filter((room) => room.active)), (e) => setLoadError(errorMessage(e)));
-  }, []);
+    let active = true;
+    listRooms().then(
+      (all) => active && setRooms(all.filter((room) => room.active)),
+      (e) => active && setRoomsError(errorMessage(e)),
+    );
+    return () => {
+      active = false;
+    };
+  }, [roomsVersion]);
 
   useEffect(() => {
     // Ignore a slow answer for a month that is no longer shown.
     let active = true;
     getAvailability(month).then(
-      ({ days }) => active && setData({ month, days }),
-      (e) => active && setLoadError(errorMessage(e)),
+      ({ days }) => {
+        if (!active) return;
+        setData({ month, days });
+        setMonthError("");
+      },
+      (e) => active && setMonthError(errorMessage(e)),
     );
     return () => {
       active = false;
@@ -80,14 +93,27 @@ export function CalendarTab() {
           value={month}
           onChange={(e) => {
             if (!e.target.value) return;
-            setLoadError("");
+            setMonthError("");
             setMonth(e.target.value);
           }}
         />
       </label>
 
-      <ErrorAlert message={loadError} />
-      {!loadError && (!rooms || !shown) && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
+      <ErrorAlert message={roomsError} />
+      {roomsError && (
+        <button
+          type="button"
+          className={`${smallButtonClass} self-start`}
+          onClick={() => {
+            setRoomsError("");
+            setRoomsVersion((v) => v + 1);
+          }}
+        >
+          {ADMIN_TEXT.retry}
+        </button>
+      )}
+      <ErrorAlert message={monthError} />
+      {((!rooms && !roomsError) || (!shown && !monthError)) && <p className="text-muted">{ADMIN_TEXT.loading}</p>}
       {rooms?.length === 0 && <p className="text-muted">{CALENDAR_TEXT.noRooms}</p>}
       {rooms && rooms.length > 0 && shown && (
         <div>

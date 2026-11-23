@@ -37,8 +37,13 @@ export function useAuthForm(mode: Mode) {
       if (mode === "signup") {
         await register({ name, phone, email, password });
       }
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push(ROUTES.home);
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      // Cosmetic routing only; the server checks the admin claim on every admin call.
+      const admin = await user
+        .getIdTokenResult(true)
+        .then((t) => t.claims.admin === true)
+        .catch(() => false);
+      router.push(admin ? ROUTES.admin : ROUTES.home);
       setPassword("");
     });
   }
