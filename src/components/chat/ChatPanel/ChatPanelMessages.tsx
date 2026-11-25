@@ -1,3 +1,4 @@
+import { Photo } from "@/components/ui/Photo";
 import { CHAT_TEXT } from "@/content/chat";
 import type { ChatPanelMessagesProps } from "./ChatPanel.types";
 
@@ -12,17 +13,28 @@ export function ChatPanelMessages({ firstName, messages, typing }: ChatPanelMess
         {firstName ? ` ${firstName}` : ""}
         {CHAT_TEXT.greetingBody}
       </p>
-      {messages.map(({ role, text }, index) => (
-        <p
+      {messages.map(({ role, text, images }, index) => (
+        <div
           key={index}
           className={
             role === "user"
               ? "max-w-[85%] self-end rounded-2xl rounded-br-sm bg-brand px-3.5 py-2.5 text-[15px] break-words whitespace-pre-wrap text-white"
-              : "max-w-[85%] self-start rounded-2xl rounded-bl-sm border border-line bg-surface px-3.5 py-2.5 text-[15px] break-words whitespace-pre-wrap"
+              : "flex max-w-[85%] flex-col gap-2 self-start rounded-2xl rounded-bl-sm border border-line bg-surface px-3.5 py-2.5 text-[15px] break-words whitespace-pre-wrap"
           }
         >
           {text}
-        </p>
+          {images.length > 0 && (
+            <ul className={`grid gap-1.5 ${images.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+              {images.map((src, i) => (
+                <li key={src}>
+                  <a href={src} target="_blank" rel="noopener noreferrer" aria-label={CHAT_TEXT.openPhoto(i + 1)}>
+                    <Photo src={src} alt={CHAT_TEXT.photoAlt(i + 1)} sizes="180px" className="relative aspect-[4/3] overflow-hidden rounded-lg" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       ))}
       {typing && <p className="self-start px-1 text-[13px] text-muted">{CHAT_TEXT.typing}…</p>}
     </div>
