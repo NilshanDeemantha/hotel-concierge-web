@@ -3,12 +3,13 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "react-toastify";
+import { AvailabilityPanel } from "@/components/admin/AvailabilityPanel";
 import { LoadError } from "@/components/admin/LoadError";
 import { RoomGallery } from "@/components/admin/RoomGallery";
 import { Photo } from "@/components/ui/Photo";
 import { TextField } from "@/components/ui/TextField";
 import { inputClass, labelClass } from "@/components/ui/TextField/TextField.styles";
-import { ADMIN_TEXT, AMENITIES, ROOMS_TEXT, ROOM_TYPES } from "@/content/admin";
+import { ADMIN_TEXT, AMENITIES, AVAILABILITY_TEXT, ROOMS_TEXT, ROOM_TYPES } from "@/content/admin";
 import { useRooms } from "@/hooks/admin/useAdminData";
 import { useHeaderSlot } from "@/hooks/admin/useHeaderSlot";
 import { Room, type RoomData } from "@/models/Room";
@@ -19,6 +20,7 @@ export function RoomsTab() {
   const list = useRooms();
   const headerSlot = useHeaderSlot();
   const [editing, setEditing] = useState<Room>();
+  const [availabilityOf, setAvailabilityOf] = useState<Room>();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(0);
 
@@ -135,6 +137,8 @@ export function RoomsTab() {
     );
   }
 
+  if (availabilityOf) return <AvailabilityPanel room={availabilityOf} onClose={() => setAvailabilityOf(undefined)} />;
+
   if (list.error) return <LoadError message={list.error} onRetry={list.retry} />;
   if (!list.data) return <p className="text-muted">{ADMIN_TEXT.loading}</p>;
 
@@ -168,7 +172,10 @@ export function RoomsTab() {
               </ul>
             )}
             {r.notice && <p className="rounded-lg bg-bg px-2.5 py-1.5 text-xs text-muted">{r.notice}</p>}
-            <button type="button" className={`${smallButtonClass} mt-auto self-start`} onClick={() => open(r)}>{ROOMS_TEXT.edit}</button>
+            <div className="mt-auto flex gap-2">
+              <button type="button" className={smallButtonClass} onClick={() => open(r)}>{ROOMS_TEXT.edit}</button>
+              <button type="button" className={smallButtonClass} onClick={() => setAvailabilityOf(r)}>{AVAILABILITY_TEXT.open}</button>
+            </div>
           </li>
         ))}
       </ul>
