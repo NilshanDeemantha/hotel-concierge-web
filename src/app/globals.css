@@ -31,3 +31,19 @@ body {
   /* System fonts: they load instantly and look native on each device. */
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+
+/* Toasts (react-toastify): white card with a border; the border, text and time bar take the colour of the type. */
+.Toastify {
+  --toastify-color-success: var(--color-ok);
+  --toastify-color-error: #c0392b;
+  --toastify-color-warning: #d9922b;
+  --toastify-font-family: inherit;
+}
+.Toastify__toast {
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.Toastify__toast--success { border-color: var(--color-ok); color: var(--color-ok); }
+.Toastify__toast--error { border-color: #d64545; color: #c0392b; }
+.Toastify__toast--warning { border-color: #d9922b; color: #9a6410; }

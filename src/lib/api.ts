@@ -6,7 +6,7 @@ import { ServerError } from "@/utils/auth-errors";
 export type RegisterDetails = { name: string; phone: string; email: string; password: string };
 
 /** Sends JSON to the server. Any failure is thrown as a ServerError with a message fit to show. */
-async function post<T = void>(path: string, body: unknown, token?: string): Promise<T> {
+export async function post<T = void>(path: string, body: unknown, token?: string): Promise<T> {
   // Without this check a missing setting would send the request to the page's own address.
   if (!API_URL) throw new ServerError(MISSING_API_URL);
   let response: Response;
@@ -26,7 +26,7 @@ async function post<T = void>(path: string, body: unknown, token?: string): Prom
   return response.json().catch(() => null) as Promise<T>;
 }
 
-async function idToken() {
+export async function idToken() {
   const token = await auth.currentUser?.getIdToken();
   if (!token) throw new ServerError(GENERIC_ERROR);
   return token;

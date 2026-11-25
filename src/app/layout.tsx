@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces } from "next/font/google";
-import { ChatProvider } from "@/components/chat/ChatProvider";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { Toaster } from "@/components/ui/Toaster";
 import { SITE } from "@/content/site";
 import "./globals.css";
 
@@ -22,10 +21,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} h-full antialiased`}
     >
       <body>
-        <ChatProvider>
-          <SiteHeader />
-          {children}
-        </ChatProvider>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

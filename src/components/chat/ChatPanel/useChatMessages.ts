@@ -1,6 +1,7 @@
 import type { User } from "firebase/auth";
 import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { sendMessage } from "@/lib/api";
 import { db } from "@/lib/firebase";
 import { errorMessage } from "@/utils/auth-errors";
@@ -16,11 +17,10 @@ export function useChatMessages(user: User) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [typing, setTyping] = useState(false);
   const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     // The rules allow reads only for the user's own documents, so every query names the user.
-    const onError = (e: unknown) => setError(errorMessage(e));
+    const onError = (e: unknown) => toast.error(errorMessage(e));
     const stopMessages = onSnapshot(
       query(collection(db, "messages"), where("uid", "==", user.uid), orderBy("createdAt", "desc"), limit(HISTORY_LIMIT)),
       (snapshot) =>
@@ -46,17 +46,16 @@ export function useChatMessages(user: User) {
   /** Resolves to true when the message was saved, so the composer knows to clear itself. */
   async function send(text: string) {
     setSending(true);
-    setError("");
     try {
       await sendMessage(text);
       return true;
     } catch (e) {
-      setError(errorMessage(e));
+      toast.error(errorMessage(e));
       return false;
     } finally {
       setSending(false);
     }
   }
 
-  return { messages, typing, sending, error, send };
+  return { messages, typing, sending, send };
 }

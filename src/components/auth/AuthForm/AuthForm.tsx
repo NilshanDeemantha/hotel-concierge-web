@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { AuthSidePanel } from "@/components/auth/AuthSidePanel";
 import { SignedInCard } from "@/components/auth/SignedInCard";
-import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
+import { ROUTES } from "@/constants";
 import { AUTH_COPY, AUTH_TEXT } from "@/content/auth";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { authCardClass, primaryButtonClass } from "@/styles/classes";
 import type { AuthFormProps } from "./AuthForm.types";
 import { ProfileFields } from "./ProfileFields";
@@ -14,13 +17,22 @@ import { useAuthForm } from "./useAuthForm";
 
 export function AuthForm({ mode }: AuthFormProps) {
   const copy = AUTH_COPY[mode];
-  const { user, values, setters, error, busy, handleSubmit } = useAuthForm(mode);
+  const { user, values, setters, busy, handleSubmit } = useAuthForm(mode);
+  const isAdmin = useIsAdmin();
+  const router = useRouter();
+
+  // A signed-in admin belongs on the dashboard, not on this page. This is the only redirect for an
+  // admin, also right after signing in here; useAuthForm sends everyone else home.
+  useEffect(() => {
+    if (isAdmin) router.replace(ROUTES.admin);
+  }, [isAdmin, router]);
 
   return (
     <main className="grid flex-1 px-4 pb-10 @xl:px-8 @4xl:grid-cols-2 @4xl:gap-12 @4xl:px-12">
       <div className="flex items-center justify-center py-8">
         <div className="w-full max-w-[420px]">
-          {user && <SignedInCard user={user} />}
+          {/* The card waits for the admin check, so an admin never sees it flash before the redirect. */}
+          {user && isAdmin === false && <SignedInCard user={user} />}
 
           {!user && (
             <>
@@ -53,8 +65,6 @@ export function AuthForm({ mode }: AuthFormProps) {
                   minLength={mode === "signup" ? 8 : undefined}
                   hint={mode === "signup" ? AUTH_TEXT.passwordHint : undefined}
                 />
-
-                <ErrorAlert message={error} />
 
                 <button type="submit" className={primaryButtonClass} disabled={busy || user === undefined}>
                   {busy ? copy.busy : copy.submit}
