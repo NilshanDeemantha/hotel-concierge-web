@@ -9,7 +9,7 @@ import { useChatMessages } from "./useChatMessages";
 
 export function ChatPanel({ user, onClose }: ChatPanelProps) {
   const firstName = user.displayName?.split(" ")[0];
-  const { messages, typing, sending, error, send } = useChatMessages(user);
+  const { messages, typing, sending, send } = useChatMessages(user);
   return (
     <aside
       aria-label={CHAT_TEXT.panelLabel}
@@ -17,7 +17,7 @@ export function ChatPanel({ user, onClose }: ChatPanelProps) {
     >
       <ChatPanelHeader onClose={onClose} />
       <ChatPanelMessages firstName={firstName} messages={messages} typing={typing} />
-      <ChatPanelComposer sending={sending} error={error} onSend={send} />
+      <ChatPanelComposer sending={sending} onSend={send} />
     </aside>
   );
 }

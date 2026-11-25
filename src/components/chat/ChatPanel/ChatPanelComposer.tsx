@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { Icon } from "@/components/ui/Icon";
 import { MAX_MESSAGE_CHARS } from "@/constants";
 import { CHAT_TEXT } from "@/content/chat";
 import type { ChatPanelComposerProps } from "./ChatPanel.types";
 
-export function ChatPanelComposer({ sending, error, onSend }: ChatPanelComposerProps) {
+export function ChatPanelComposer({ sending, onSend }: ChatPanelComposerProps) {
   const [text, setText] = useState("");
   const empty = !text.trim();
 
@@ -19,7 +18,6 @@ export function ChatPanelComposer({ sending, error, onSend }: ChatPanelComposerP
 
   return (
     <div className="border-t border-line bg-surface px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">
-      <ErrorAlert message={error} />
       <form className="flex items-center gap-2" onSubmit={submit}>
         <input
           type="text"

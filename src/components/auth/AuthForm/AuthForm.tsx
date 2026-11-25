@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AuthSidePanel } from "@/components/auth/AuthSidePanel";
 import { SignedInCard } from "@/components/auth/SignedInCard";
-import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
 import { ROUTES } from "@/constants";
@@ -18,7 +17,7 @@ import { useAuthForm } from "./useAuthForm";
 
 export function AuthForm({ mode }: AuthFormProps) {
   const copy = AUTH_COPY[mode];
-  const { user, values, setters, error, busy, handleSubmit } = useAuthForm(mode);
+  const { user, values, setters, busy, handleSubmit } = useAuthForm(mode);
   const isAdmin = useIsAdmin();
   const router = useRouter();
 
@@ -66,8 +65,6 @@ export function AuthForm({ mode }: AuthFormProps) {
                   minLength={mode === "signup" ? 8 : undefined}
                   hint={mode === "signup" ? AUTH_TEXT.passwordHint : undefined}
                 />
-
-                <ErrorAlert message={error} />
 
                 <button type="submit" className={primaryButtonClass} disabled={busy || user === undefined}>
                   {busy ? copy.busy : copy.submit}

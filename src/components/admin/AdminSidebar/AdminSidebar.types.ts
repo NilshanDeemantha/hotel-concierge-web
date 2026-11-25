@@ -4,5 +4,4 @@ export type Section = keyof typeof ADMIN_TEXT.sections;
 
 export type AdminSidebarProps = {
   section: Section;
-  onSelect: (section: Section) => void;
 };

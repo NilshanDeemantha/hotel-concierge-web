@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { toast } from "react-toastify";
 import { LoadError } from "@/components/admin/LoadError";
 import { ADMIN_TEXT, CONVERSATIONS_TEXT } from "@/content/admin";
-import { sendStaffMessage } from "@/lib/admin-api";
 import { useConversations, useGuestNames, useMessages } from "@/hooks/admin/useAdminData";
 
 const formatDate = (date: Date | null) => (date ? date.toLocaleString() : ADMIN_TEXT.noDate);
@@ -16,19 +16,17 @@ export function ConversationsTab() {
   const conversations = list.data;
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
-  const [sendError, setSendError] = useState(false);
 
   async function send(e: FormEvent) {
     e.preventDefault();
     const text = draft.trim();
     if (!selected || !text || sending) return;
     setSending(true);
-    setSendError(false);
     try {
-      await sendStaffMessage(selected, text);
+      await conversations?.find((c) => c.id === selected)?.sendStaffMessage(text);
       setDraft(""); // the live query shows the new message
     } catch {
-      setSendError(true);
+      toast.error(CONVERSATIONS_TEXT.sendFailed);
     } finally {
       setSending(false);
     }
@@ -41,7 +39,7 @@ export function ConversationsTab() {
   const selectedName = selected ? names[conversations.find((c) => c.id === selected)?.uid ?? ""] : undefined;
 
   return (
-    <div className="grid h-[70vh] overflow-hidden @4xl:h-[calc(100dvh-6.5rem)] rounded-2xl border border-line bg-surface @4xl:grid-cols-[320px_1fr]">
+    <div className="grid h-[calc(100dvh-11rem)] overflow-hidden md:h-[calc(100dvh-6.5rem)] rounded-2xl border border-line bg-surface @4xl:grid-cols-[320px_1fr]">
       <ul
         aria-label={CONVERSATIONS_TEXT.listLabel}
         className={`overflow-y-auto border-line @4xl:block @4xl:border-r ${selected ? "hidden" : "block"}`}
@@ -54,7 +52,7 @@ export function ConversationsTab() {
                 type="button"
                 aria-pressed={c.id === selected}
                 className={`flex w-full items-center gap-3 px-4 py-3 text-left ${c.id === selected ? "bg-brand-soft" : "hover:bg-bg"}`}
-                onClick={() => { setSelected(c.id); setSendError(false); }}
+                onClick={() => setSelected(c.id)}
               >
                 <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-full bg-brand font-semibold text-white">
                   {name[0]}
@@ -62,7 +60,7 @@ export function ConversationsTab() {
                 <span className="min-w-0">
                   <span className="block truncate font-semibold">{name}</span>
                   <span className="block truncate text-sm text-muted">
-                    {CONVERSATIONS_TEXT.messages(c.messageCount)} · {formatDate(c.updatedAt)}
+                    {c.messageLabel} · {formatDate(c.updatedAt)}
                   </span>
                 </span>
               </button>
@@ -86,12 +84,12 @@ export function ConversationsTab() {
           <LoadError message={thread.error} onRetry={thread.retry} />
           {thread.data?.length === 0 && <p className="text-muted">{CONVERSATIONS_TEXT.emptyThread}</p>}
           {thread.data?.map((m) => {
-            const guest = m.role === "user";
+            const guest = m.isGuest;
             return (
               <div key={m.id} className={`max-w-[75%] ${guest ? "self-start" : "self-end"}`}>
                 <p
-                  title={`${CONVERSATIONS_TEXT.roles[m.role] ?? m.role} · ${formatDate(m.createdAt)}`}
-                  className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 ${guest ? "bg-line" : m.role === "staff" ? "bg-brand text-white" : "bg-brand-soft"}`}
+                  title={`${m.roleLabel} · ${formatDate(m.createdAt)}`}
+                  className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 ${guest ? "bg-line" : m.isStaff ? "bg-brand text-white" : "bg-brand-soft"}`}
                 >
                   {m.content}
                 </p>
@@ -101,7 +99,6 @@ export function ConversationsTab() {
         </div>
         {selected && (
           <form onSubmit={send} className="border-t border-line p-3">
-            {sendError && <p role="alert" className="mb-2 text-sm text-accent">{CONVERSATIONS_TEXT.sendFailed}</p>}
             <div className="flex gap-2">
               <input
                 value={draft}

@@ -1,49 +1,26 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  limit,
-  orderBy,
-  query,
-  Timestamp,
-  where,
-  type QuerySnapshot,
-} from "firebase/firestore";
+import { doc, getDoc, type QuerySnapshot } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { CONVERSATIONS_TEXT } from "@/content/admin";
 import { db } from "@/lib/firebase";
-import type { AdminConversation, AdminMessage } from "@/lib/admin-api";
+import { Conversation } from "@/models/Conversation";
+import { Message } from "@/models/Message";
+import { Room } from "@/models/Room";
 import { useLiveQuery } from "./useLiveQuery";
 
 // The admin screens read Firestore directly (the rules allow admins); writes go through the server.
-// A pending server timestamp reads as null until the server has set it.
-const toDate = (value: unknown) => (value instanceof Timestamp ? value.toDate() : null);
-
-// shortcut: the 100 most recent conversations only, add paging when a hotel has more.
-const conversationsQuery = () =>
-  query(collection(db, "conversations"), orderBy("updatedAt", "desc"), limit(100));
-const toConversations = (s: QuerySnapshot): AdminConversation[] =>
-  s.docs.map((d) => ({
-    id: d.id,
-    uid: d.get("uid"),
-    messageCount: d.get("messageCount") ?? 0,
-    updatedAt: toDate(d.get("updatedAt")),
-  }));
-
+// What each collection looks like, and how it is queried, lives in its model (src/models).
+const conversationsQuery = () => Conversation.recentQuery();
+const toConversations = (s: QuerySnapshot) => s.docs.map((d) => Conversation.fromSnapshot(d));
 export const useConversations = () => useLiveQuery("all", conversationsQuery, toConversations);
 
-// shortcut: at most 500 messages per thread, unordered (no composite index), so a longer thread
-// may miss some; add an index on (conversationId, createdAt) and orderBy when threads grow that long.
-const messagesQuery = (conversationId: string) =>
-  query(collection(db, "messages"), where("conversationId", "==", conversationId), limit(500));
-const toMessages = (s: QuerySnapshot): AdminMessage[] =>
-  s.docs
-    .map((d) => ({ id: d.id, role: d.get("role"), content: d.get("content"), createdAt: toDate(d.get("createdAt")) }))
-    // Oldest first; messages still waiting for their server timestamp go last.
-    .sort((a, b) => (a.createdAt?.getTime() ?? Infinity) - (b.createdAt?.getTime() ?? Infinity));
-
+const messagesQuery = (conversationId: string) => Message.ofConversationQuery(conversationId);
+const toMessages = (s: QuerySnapshot) => s.docs.map((d) => Message.fromSnapshot(d)).sort(Message.oldestFirst);
 export const useMessages = (conversationId: string | undefined) =>
   useLiveQuery(conversationId ?? null, messagesQuery, toMessages);
+
+const roomsQuery = () => Room.listQuery();
+const toRooms = (s: QuerySnapshot) => s.docs.map((d) => Room.fromSnapshot(d)).sort(Room.byNumber);
+export const useRooms = () => useLiveQuery("all", roomsQuery, toRooms);
 
 /**
  * Guest names by uid, fetched once per uid for as long as the screen is open.

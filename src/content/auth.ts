@@ -36,6 +36,8 @@ export const AUTH_TEXT = {
   passwordHint: "At least 8 characters.",
   showPassword: "Show password",
   hidePassword: "Hide password",
+  signedIn: "Signed in.",
+  signedUp: "Account created. Welcome!",
   demoNote: "Demo site: please don't use a password you use anywhere else.",
   sideTitle: "Slow days between the palms and the sea",
 } as const;
