@@ -104,3 +104,47 @@ export const ROOMS_TEXT = {
   saveFailed: "Could not save the room. Try again.",
   perNight: (n: number) => `${MODEL_CONFIG.currency} ${n.toLocaleString(MODEL_CONFIG.locale)} / night`,
 } as const;
+
+export const MAX_NIGHTS = 60; // at most this many nights in one change, as in admin_set_availability
+export const MAX_AVAILABILITY_NOTE = 200;
+
+const dayLabel = (date: string) =>
+  new Date(`${date}T00:00:00Z`).toLocaleDateString(MODEL_CONFIG.locale, { day: "numeric", month: "short", timeZone: "UTC" });
+
+export const AVAILABILITY_TEXT = {
+  open: "Availability",
+  title: (room: string) => `Availability · ${room}`,
+  close: "Back to rooms",
+  loadHint: "Days are free unless marked. Bookings made through Xenia show here as booked.",
+  prevMonth: "Previous month",
+  nextMonth: "Next month",
+  weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  status: { free: "Available", booked: "Booked", blocked: "Removed" } as Record<string, string>,
+  dayLabel,
+  dayAria: (date: string, status: string) => `${dayLabel(date)}: ${status}`,
+  taken: "Taken days this month",
+  noneTaken: "Nothing booked or removed this month.",
+  change: "Change availability",
+  from: "First night",
+  until: "Check-out date",
+  untilHint: "The night of the check-out date is not included.",
+  action: "What to do",
+  actions: {
+    blocked: "Remove from availability",
+    booked: "Mark as booked",
+    free: "Make available again",
+  } as Record<string, string>,
+  note: "Note (optional)",
+  notePlaceholder: "Guest name, or the reason (for example repairs)",
+  nights: (n: number) => `${n} ${n === 1 ? "night" : "nights"}`,
+  conflict: (days: string[]) => `Already taken: ${days.map(dayLabel).join(", ")}. Make them available first, or pick other dates.`,
+  badDates: "Choose both dates.",
+  badRange: "The check-out date must be after the first night.",
+  tooLong: `At most ${MAX_NIGHTS} nights at a time.`,
+  badNote: `The note can be at most ${MAX_AVAILABILITY_NOTE} characters.`,
+  takenOn: (date: string) => `Already taken on ${dayLabel(date)}.`,
+  apply: "Apply",
+  applying: "Saving…",
+  done: { blocked: "Removed from availability.", booked: "Marked as booked.", free: "Available again." } as Record<string, string>,
+  failed: "Could not change availability. Try again.",
+} as const;

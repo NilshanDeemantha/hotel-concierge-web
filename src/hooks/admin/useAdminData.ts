@@ -2,6 +2,7 @@ import { doc, getDoc, type QuerySnapshot } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { CONVERSATIONS_TEXT } from "@/content/admin";
 import { db } from "@/lib/firebase";
+import { Availability } from "@/models/Availability";
 import { Conversation } from "@/models/Conversation";
 import { Message } from "@/models/Message";
 import { Room } from "@/models/Room";
@@ -21,6 +22,10 @@ export const useMessages = (conversationId: string | undefined) =>
 const roomsQuery = () => Room.listQuery();
 const toRooms = (s: QuerySnapshot) => s.docs.map((d) => Room.fromSnapshot(d)).sort(Room.byNumber);
 export const useRooms = () => useLiveQuery("all", roomsQuery, toRooms);
+
+const availabilityQuery = (roomId: string) => Availability.ofRoomQuery(roomId);
+const toAvailability = (s: QuerySnapshot) => s.docs.map((d) => Availability.fromSnapshot(d));
+export const useAvailability = (roomId: string) => useLiveQuery(roomId, availabilityQuery, toAvailability);
 
 /**
  * Guest names by uid, fetched once per uid for as long as the screen is open.
