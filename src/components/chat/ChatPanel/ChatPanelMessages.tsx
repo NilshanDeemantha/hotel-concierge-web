@@ -1,3 +1,4 @@
+import { PayButton } from "@/components/chat/PayButton";
 import { Photo } from "@/components/ui/Photo";
 import { CHAT_TEXT } from "@/content/chat";
 import type { ChatPanelMessagesProps } from "./ChatPanel.types";
@@ -13,7 +14,7 @@ export function ChatPanelMessages({ firstName, messages, typing }: ChatPanelMess
         {firstName ? ` ${firstName}` : ""}
         {CHAT_TEXT.greetingBody}
       </p>
-      {messages.map(({ role, text, images }, index) => (
+      {messages.map(({ role, text, images, payment }, index) => (
         <div
           key={index}
           className={
@@ -23,6 +24,7 @@ export function ChatPanelMessages({ firstName, messages, typing }: ChatPanelMess
           }
         >
           {text}
+          {payment && <PayButton payment={payment} />}
           {images.length > 0 && (
             <ul className={`grid gap-1.5 ${images.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
               {images.map((src, i) => (

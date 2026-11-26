@@ -11,6 +11,10 @@ export const CHAT_TEXT = {
   greetingBody:
     "! I'm Xenia, the concierge at Thambili Bay. I can show you our rooms and photos, check dates, make a booking and help during your stay, right here.",
   typing: "Xenia is typing",
+  payNow: "Pay now",
+  payNote: "Secure one-time payment on Stripe's page",
+  payExpires: (time: string) => `Link expires at ${time}`,
+  payExpired: "Payment link expired",
   photoAlt: (n: number) => `Photo ${n} sent by Xenia`,
   openPhoto: (n: number) => `Open photo ${n} in a new tab`,
   messageLabel: "Type your message",
