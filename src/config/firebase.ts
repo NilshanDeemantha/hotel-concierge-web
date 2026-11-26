@@ -4,5 +4,6 @@ export const firebaseConfig = {
   apiKey: "AIzaSyAY80Rfqlsr19TLCT1GNV49cYY1ZPkqQww",
   authDomain: "thambili-bay-concierge.firebaseapp.com",
   projectId: "thambili-bay-concierge",
+  storageBucket: "thambili-bay-concierge.firebasestorage.app",
   appId: "1:801312077386:web:53b12a1f8c9995c34898b3",
 };

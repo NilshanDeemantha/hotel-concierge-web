@@ -1,4 +1,13 @@
-export const ROUTES = { home: "/", login: "/login", signup: "/signup" } as const;
+export const ROUTES = {
+  home: "/",
+  login: "/login",
+  signup: "/signup",
+  // Where an admin lands. /a itself only redirects here.
+  admin: "/a/conversation",
+} as const;
+
+/** One page per admin menu item. A new section is its page, an entry here and its label in ADMIN_TEXT.sections. */
+export const ADMIN_PATHS = { conversations: "/a/conversation", rooms: "/a/rooms" } as const;
 
 /** Anchor ids of the home page sections, shared by the sections and the header links. */
 export const SECTION_IDS = {

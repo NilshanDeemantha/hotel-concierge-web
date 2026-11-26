@@ -13,3 +13,5 @@ export const primaryButtonClass =
   "min-h-13 w-full rounded-full bg-brand px-4 font-semibold text-white disabled:opacity-60";
 export const authCardClass =
   "rounded-[20px] border border-line bg-surface p-7 shadow-[0_10px_30px_rgba(30,42,40,0.06)]";
+export const smallButtonClass =
+  "min-h-11 rounded-full border border-brand px-4 text-sm font-semibold text-brand disabled:opacity-60";
