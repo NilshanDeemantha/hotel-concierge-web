@@ -3,7 +3,10 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "react-toastify";
 import { LoadError } from "@/components/admin/LoadError";
+import { PayButton } from "@/components/chat/PayButton";
+import { Photo } from "@/components/ui/Photo";
 import { ADMIN_TEXT, CONVERSATIONS_TEXT } from "@/content/admin";
+import { CHAT_TEXT } from "@/content/chat";
 import { useConversations, useGuestNames, useMessages } from "@/hooks/admin/useAdminData";
 
 const formatDate = (date: Date | null) => (date ? date.toLocaleString() : ADMIN_TEXT.noDate);
@@ -86,13 +89,25 @@ export function ConversationsTab() {
           {thread.data?.map((m) => {
             const guest = m.isGuest;
             return (
-              <div key={m.id} className={`max-w-[75%] ${guest ? "self-start" : "self-end"}`}>
-                <p
+              <div key={m.id} className={`flex max-w-[75%] flex-col gap-1.5 ${guest ? "self-start" : "self-end"}`}>
+                <div
                   title={`${m.roleLabel} · ${formatDate(m.createdAt)}`}
-                  className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 ${guest ? "bg-line" : m.isStaff ? "bg-brand text-white" : "bg-brand-soft"}`}
+                  className={`flex flex-col gap-2 whitespace-pre-wrap break-words rounded-2xl px-3 py-2 ${guest ? "bg-line" : m.isStaff ? "bg-brand text-white" : "bg-brand-soft"}`}
                 >
                   {m.content}
-                </p>
+                  {m.payment && <PayButton payment={m.payment} readOnly />}
+                  {m.images.length > 0 && (
+                    <ul className={`grid gap-1.5 ${m.images.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+                      {m.images.map((src, i) => (
+                        <li key={src}>
+                          <a href={src} target="_blank" rel="noopener noreferrer" aria-label={CHAT_TEXT.openPhoto(i + 1)}>
+                            <Photo src={src} alt={CHAT_TEXT.photoAlt(i + 1)} sizes="180px" className="relative aspect-[4/3] overflow-hidden rounded-lg" />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             );
           })}

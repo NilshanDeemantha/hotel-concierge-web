@@ -2,26 +2,13 @@ import type { User } from "firebase/auth";
 import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { firebaseConfig } from "@/config/firebase";
 import { sendMessage } from "@/lib/api";
 import { db } from "@/lib/firebase";
 import { errorMessage } from "@/utils/auth-errors";
-import type { ChatMessage, ChatPayment } from "./ChatPanel.types";
+import { paymentOf, photosOf } from "@/utils/chat-media";
+import type { ChatMessage } from "./ChatPanel.types";
 
 const HISTORY_LIMIT = 50;
-// Only photos from our own Storage bucket are shown; any other link in a message is ignored.
-const PHOTO_PREFIX = `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/`;
-const photosOf = (value: unknown) =>
-  Array.isArray(value) ? value.filter((u): u is string => typeof u === "string" && u.startsWith(PHOTO_PREFIX)) : [];
-
-// Only a Stripe Checkout address is ever offered as a payment link, whatever a message says.
-const CHECKOUT_PREFIX = "https://checkout.stripe.com/";
-const paymentOf = (value: unknown): ChatPayment | undefined => {
-  const { url, expiresAt } = (value ?? {}) as Partial<ChatPayment>;
-  return typeof url === "string" && url.startsWith(CHECKOUT_PREFIX) && typeof expiresAt === "string" && !Number.isNaN(Date.parse(expiresAt))
-    ? { url, expiresAt }
-    : undefined;
-};
 
 /**
  * The conversation, live: saved messages, Xenia's answers and whether she is typing all arrive
