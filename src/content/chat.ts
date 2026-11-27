@@ -15,6 +15,8 @@ export const CHAT_TEXT = {
   payNote: "Secure one-time payment on Stripe's page",
   payExpires: (time: string) => `Link expires at ${time}`,
   payExpired: "Payment link expired",
+  payDone: "Payment done",
+  payWaiting: (time: string) => `Waiting for payment until ${time}`,
   photoAlt: (n: number) => `Photo ${n} sent by Xenia`,
   openPhoto: (n: number) => `Open photo ${n} in a new tab`,
   messageLabel: "Type your message",
