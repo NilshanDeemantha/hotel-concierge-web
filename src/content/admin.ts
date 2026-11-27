@@ -13,7 +13,7 @@ export const ADMIN_TEXT = {
   loadFailed: "Could not load this data. Check your connection and try again.",
   navLabel: "Admin sections",
   menu: "Menu",
-  sections: { conversations: "Conversations", rooms: "Rooms" },
+  sections: { conversations: "Conversations", bookings: "Bookings", rooms: "Rooms" },
 } as const;
 
 export const CONVERSATIONS_TEXT = {
@@ -147,4 +147,25 @@ export const AVAILABILITY_TEXT = {
   applying: "Saving…",
   done: { blocked: "Removed from availability.", booked: "Marked as booked.", free: "Available again." } as Record<string, string>,
   failed: "Could not change availability. Try again.",
+} as const;
+
+export const BOOKINGS_TEXT = {
+  empty: "No bookings yet.",
+  emptyFilter: "No bookings with this status.",
+  filterLabel: "Filter by status",
+  all: "All",
+  statuses: { payment_pending: "Awaiting payment", confirmed: "Confirmed", cancelled: "Cancelled" } as Record<string, string>,
+  room: (number: string, name: string) => `Room ${number}${name ? ` · ${name}` : ""}`,
+  stay: (checkIn: string, checkOut: string, nights: number) => `${checkIn} → ${checkOut} · ${nights} ${nights === 1 ? "night" : "nights"}`,
+  total: (n: number) => `${MODEL_CONFIG.currency} ${n.toLocaleString(MODEL_CONFIG.locale)}`,
+  payUntil: (when: string) => `Pay by ${when}`,
+  paidOn: (when: string) => `Paid ${when}`,
+  refund: (amount: string, percent: number) => `Refund ${amount} (${percent}%)`,
+  refundFailed: "Refund failed: refund by hand in Stripe",
+  reasons: {
+    payment_link_expired: "Payment time ran out",
+    payment_failed: "Payment failed",
+    guest_request: "Cancelled by the guest",
+  } as Record<string, string>,
+  booked: (when: string) => `Booked ${when}`,
 } as const;

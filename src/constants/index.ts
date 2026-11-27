@@ -7,7 +7,7 @@ export const ROUTES = {
 } as const;
 
 /** One page per admin menu item. A new section is its page, an entry here and its label in ADMIN_TEXT.sections. */
-export const ADMIN_PATHS = { conversations: "/a/conversation", rooms: "/a/rooms" } as const;
+export const ADMIN_PATHS = { conversations: "/a/conversation", bookings: "/a/bookings", rooms: "/a/rooms" } as const;
 
 /** Anchor ids of the home page sections, shared by the sections and the header links. */
 export const SECTION_IDS = {
