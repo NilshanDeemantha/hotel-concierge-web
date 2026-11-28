@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { CONVERSATIONS_TEXT } from "@/content/admin";
 import { db } from "@/lib/firebase";
 import { Availability } from "@/models/Availability";
+import { Booking } from "@/models/Booking";
 import { Conversation } from "@/models/Conversation";
 import { Message } from "@/models/Message";
 import { Room } from "@/models/Room";
@@ -61,3 +62,7 @@ export function useGuestNames(uids: string[]) {
 
   return names;
 }
+
+const bookingsQuery = () => Booking.listQuery();
+const toBookings = (s: QuerySnapshot) => s.docs.map((d) => Booking.fromSnapshot(d)).sort(Booking.soonestFirst);
+export const useBookings = () => useLiveQuery("all", bookingsQuery, toBookings);

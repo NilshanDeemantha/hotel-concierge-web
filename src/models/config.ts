@@ -5,5 +5,5 @@ export const MODEL_CONFIG = {
   // shortcut: a list reads only this many documents; add paging when a hotel has more.
   // Messages are also unordered (no composite index), so a longer thread may miss some: add an index on
   // (conversationId, createdAt) and orderBy when threads grow that long.
-  limits: { rooms: 200, conversations: 100, messages: 500, availability: 120 },
+  limits: { rooms: 200, conversations: 100, messages: 500, availability: 120, bookings: 200 },
 } as const;
